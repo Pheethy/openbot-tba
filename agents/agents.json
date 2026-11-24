@@ -27,7 +27,11 @@
       "title": "Implementation",
       "avatarHue": 30,
       "description": "TBA SDLC team, phase 3 (build). Takes one Jira subtask: cuts the branch in the right repo, follows existing code patterns, writes code and unit tests, verifies locally. One subtask, one repo. Never commits, pushes or transitions Jira without the user's approval. Role prompt: <TBA_ROOT>\\reference\\agents\\field-agent.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json.",
-      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\field-agent.md and <TBA_ROOT>\\reference\\commands\\tba-implement.md. Do not run any script, do not touch any repo. Reply with one line in Thai saying you are ready and which subtask key you need to start."
+      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\field-agent.md and <TBA_ROOT>\\reference\\commands\\tba-implement.md. Do not run any script, do not touch any repo. Reply with one line in Thai saying you are ready and which subtask key you need to start.",
+      "skills": [
+        "caveman",
+        "ponytail"
+      ]
     },
     {
       "key": "bugsjaeger",

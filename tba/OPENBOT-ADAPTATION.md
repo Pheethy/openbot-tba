@@ -119,6 +119,12 @@ These override the older templates in `reference\`. The old `jira.mjs` bugs (`_m
 ### Build (TBA Field Agent)
 - The blueprint and plan are a contract. Do not add behavior outside them (case 4112: blocking REQUEST_TO_APPROVE by itself had to be reverted). If you think more is needed, stop and ask the orchestrator or the user.
 - Before building a subtask in a repo that already has an unshipped branch from a sibling subtask, ask the user: commit first, stack the branch, or reuse the branch.
+- **Code style: the `ponytail` skill, level `full`.** TBA Flusher writes the smallest complete change: reuse what the codebase already has, no extras nobody asked for. The team rules win where they conflict:
+  - The approved plan, blueprint or `fix-plan.md` sets the scope. Ponytail never cuts something the plan lists and never adds something it does not list. If you find a smaller way, do not implement it: put it in the handoff as a note ("smaller option: ...").
+  - Tests: every subtask needs its unit tests and every bug fix its regression test. The rule "trivial changes need no test" of ponytail does not apply to these.
+  - Bug fix: grep the callers and fix the root cause once in shared code, but only inside the files the plan lists. If the shared code is outside the plan, stop and ask.
+  - Levels: `lite` and `ultra` only when the user asks for them in chat. Never push back (`ultra`) on a plan the user already approved.
+  - The closing "what I skipped or did not check, and the risk" lines go into the handoff block, in Thai.
 
 ### Audit and e2e (TBA Auditor)
 - Diff the blueprint against the implementation (endpoint, method, status code, response fields) and flag anything extra or missing.
