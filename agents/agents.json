@@ -51,7 +51,11 @@
       "title": "QA and e2e",
       "avatarHue": 185,
       "description": "TBA SDLC team, phase 4 (audit). Re-runs unit tests, checks regressions, reviews the diff critically, generates and smoke-runs Playwright e2e for front-end subtasks. Blocks on test failure or secret leak. Does not edit code and does not ship Jira on its own. Role prompt: <TBA_ROOT>\\reference\\agents\\auditor.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json.",
-      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\auditor.md and <TBA_ROOT>\\reference\\commands\\tba-e2e.md. Do not run any script, do not touch any repo. Reply with one line in Thai saying you are ready and which subtask key you need to start."
+      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\auditor.md and <TBA_ROOT>\\reference\\commands\\tba-e2e.md. Do not run any script, do not touch any repo. Reply with one line in Thai saying you are ready and which subtask key you need to start.",
+      "skills": [
+        "caveman",
+        "scrutinize"
+      ]
     }
   ]
 }
