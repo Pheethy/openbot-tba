@@ -14,8 +14,9 @@ The reference files use the original plugin's role names. In OpenBot the agents 
 |---|---|---|
 | Case Officer | **TBA TaskScout** | `reference\agents\case-officer.md` |
 | Architect | **TBA PlanMan** | `reference\agents\architect.md` |
-| Field Agent | **TBA Brusher** | `reference\agents\field-agent.md` |
+| Field Agent | **TBA Flusher** | `reference\agents\field-agent.md` |
 | Auditor | **TBQA** | `reference\agents\auditor.md` |
+| (new, no original) | **TBA BugsJaeger** | `reference\agents\bugs-jaeger.md` |
 
 In the rules below, "Scouter" means TBA TaskScout and "Architect" means TBA PlanMan. Use the OpenBot names when you speak to the user or to teammates.
 ## Language and style (all TBA agents)
@@ -127,6 +128,15 @@ These override the older templates in `reference\`. The old `jira.mjs` bugs (`_m
 - A subtask goes to **Done**. Only the Story (main card) goes to **READY TO TEST**.
 - Read the available transitions with the Atlassian tools first. If the target is not directly available, propose the path (for example To Do → In Progress → Done) and ask once for approval of that whole path.
 - In the closing summary, say which service must deploy before which (for example API 4112 before web 4113).
+
+## Debug flow (TBA BugsJaeger → TBA Flusher → TBQA)
+
+- A bug (Jira bug card, error log, failing test) goes to **TBA BugsJaeger** first. It follows the `debug-mantra` skill and writes `.tba/cases/<KEY>/debug.md` (repro, fail path, ranked hypotheses, ledger, root cause, fix design, regression test, QA checklist).
+- No reliable repro, or no surviving hypothesis: BugsJaeger stops and asks the user. It does not hand off.
+- When `debug.md` is complete, the work goes to **TBA Flusher**, who implements exactly the fix design and the regression test (local only, no commit, no push, no Jira write, nothing outside the design; stop and ask if more seems needed). Then **TBQA** re-runs the repro and all tests, checks regressions, and compares the diff with `debug.md` (root cause really fixed, nothing extra, no `[DBG-...]` probe left, regression test fails before and passes after).
+- TBQA states READY TO SHIP or BLOCKED. A blocked result goes back to TBA Flusher with the failing evidence; if TBQA doubts the root cause, it goes back to BugsJaeger.
+- Workflow: `TBA 3: bug → debug → fix → verify`. In a direct chat, the hand-offs use `openbot.send_message` (see `reference\agents\bugs-jaeger.md`).
+- Moving a bug card to another status, or posting the result to Jira, is a Jira write: ask the user first.
 
 ## Handoff between agents
 

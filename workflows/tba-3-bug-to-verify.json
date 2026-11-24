@@ -1,0 +1,28 @@
+{
+  "title": "TBA 3: bug → debug → fix → verify",
+  "note": "Nodes use agentKey (see agents/agents.json). Build with edit_workflow like tba-1. 'ready' is a condition: edge to 'fix' has branch yes, edge to 'stop' has branch no. No approval node: the hand-off BugsJaeger -> Flusher -> TBQA is automatic, everything stays local (no commit, no push, no Jira write).",
+  "nodes": [
+    { "ref": "t", "kind": "trigger", "fields": { "trigger": "manual" } },
+    {
+      "ref": "debug", "kind": "agent", "from": "t", "agentKey": "bugsjaeger",
+      "fields": { "task": "Debug the bug in the input (a Jira key, an error log or a failing test, plus the repo if given). Follow your role prompt, the debug-mantra skill and OPENBOT-ADAPTATION.md: recite the mantra, reproduce, find the fail path, falsify, keep the ledger. Write .tba/cases/<KEY>/debug.md. Remove every temporary probe. Do not write the production fix, do not commit or push, do not write to Jira. End your answer with a handoff block that stands alone, and state clearly SOLUTION READY (reliable repro, one surviving hypothesis, consistent ledger) or NEEDS INPUT with what is missing." }
+    },
+    {
+      "ref": "ready", "kind": "condition", "from": "debug",
+      "fields": { "rule": "BugsJaeger stated SOLUTION READY: a reliable repro exists, one hypothesis survived its disproof, and debug.md contains a fix design and a regression test." }
+    },
+    {
+      "ref": "fix", "kind": "agent", "from": "ready", "branch": "yes", "agentKey": "flusher",
+      "fields": { "task": "Implement the fix from BugsJaeger's handoff and .tba/cases/<KEY>/debug.md. The fix design is a contract: change only what it lists, add the regression test, and stop with a question if more seems needed. Confirm the regression test failed before the fix and passes after, run the repo's tests, and make sure no [DBG-...] probe is left. Local only: do not commit, push or touch Jira. End with a handoff block for TBQA." }
+    },
+    {
+      "ref": "verify", "kind": "agent", "from": "fix", "agentKey": "tbqa",
+      "fields": { "task": "Verify the fix from the handoff of TBA Flusher against .tba/cases/<KEY>/debug.md: re-run the repro and the whole test suite of the touched packages, check regressions, review the diff (root cause really fixed, nothing outside the fix design, no [DBG-...] probe left, regression test fails without the fix and passes with it), and run the QA checklist in debug.md (e2e only if the front end is touched, with the preflight checklist). Do not edit code. State clearly READY TO SHIP or BLOCKED with reasons, and say if you doubt the root cause." }
+    },
+    { "ref": "done", "kind": "output", "from": "verify", "fields": { "target": "notify" } },
+    {
+      "ref": "stop", "kind": "output", "from": "ready", "branch": "no",
+      "fields": { "target": "notify", "message": "TBA 3 หยุด: TBA BugsJaeger ยังไม่มี solution ที่พร้อมส่งต่อ (ไม่มี repro ที่เชื่อถือได้ หรือยังไม่มี hypothesis ที่รอด) ดูรายงานของ TBA BugsJaeger แล้วให้ข้อมูลเพิ่ม" }
+    }
+  ]
+}

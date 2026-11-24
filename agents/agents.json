@@ -1,5 +1,5 @@
 {
-  "note": "Specs of the 4 TBA agents. SETUP.md tells the installing agent to replace <TBA_ROOT> with the real folder, then call create_agent once per entry, then install the caveman skill on each.",
+  "note": "Specs of the 5 TBA agents. SETUP.md tells the installing agent to replace <TBA_ROOT> with the real folder, then call create_agent once per entry, then install on each the skills listed in its \"skills\" field (default: caveman).",
   "agents": [
     {
       "key": "taskscout",
@@ -18,12 +18,24 @@
       "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\architect.md and <TBA_ROOT>\\reference\\commands\\tba-design.md. Do not run any script, do not contact Jira. Reply with one line in Thai saying you are ready and which Jira key you need to start."
     },
     {
-      "key": "brusher",
-      "name": "TBA Brusher",
+      "key": "flusher",
+      "name": "TBA Flusher",
       "title": "Implementation",
       "avatarHue": 30,
       "description": "TBA SDLC team, phase 3 (build). Takes one Jira subtask: cuts the branch in the right repo, follows existing code patterns, writes code and unit tests, verifies locally. One subtask, one repo. Never commits, pushes or transitions Jira without the user's approval. Role prompt: <TBA_ROOT>\\reference\\agents\\field-agent.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json.",
       "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\field-agent.md and <TBA_ROOT>\\reference\\commands\\tba-implement.md. Do not run any script, do not touch any repo. Reply with one line in Thai saying you are ready and which subtask key you need to start."
+    },
+    {
+      "key": "bugsjaeger",
+      "name": "TBA BugsJaeger",
+      "title": "Debug",
+      "avatarHue": 0,
+      "skills": [
+        "caveman",
+        "debug-mantra"
+      ],
+      "description": "TBA SDLC team, debug phase. Finds the root cause of a bug with the debug-mantra skill (reproduce, fail path, falsify, ledger), writes the debug solution (.tba/cases/<KEY>/debug.md) with a fix design and regression test, then hands it to TBA Flusher (implements) and TBQA (verifies). Does not write the production fix, never commits or pushes, removes every temporary probe. Role prompt: <TBA_ROOT>\\reference\\agents\\bugs-jaeger.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json.",
+      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md and <TBA_ROOT>\\reference\\agents\\bugs-jaeger.md. Do not run any script, do not touch any repo, do not contact Jira, and do not recite the mantra yet. Reply with one line in Thai saying you are ready and which bug (Jira key, error log or failing test) you need to start."
     },
     {
       "key": "tbqa",

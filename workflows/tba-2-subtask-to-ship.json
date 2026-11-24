@@ -4,7 +4,7 @@
   "nodes": [
     { "ref": "t", "kind": "trigger", "fields": { "trigger": "manual" } },
     {
-      "ref": "build", "kind": "agent", "from": "t", "agentKey": "brusher",
+      "ref": "build", "kind": "agent", "from": "t", "agentKey": "flusher",
       "fields": { "task": "Implement the Jira subtask whose key is in the input (parent case state in .tba/cases/<PARENT>/plan.md and api-blueprint.md). Follow your role prompt and OPENBOT-ADAPTATION.md. The blueprint and plan are a contract: add nothing outside them, and stop with a question if more seems needed. If a sibling subtask branch in the same repo is unshipped, report that and ask which branch strategy to use before building. Code plus unit tests, verify locally. Do not commit, push or touch Jira. End with the handoff block." }
     },
     {
@@ -26,7 +26,7 @@
     { "ref": "ok", "kind": "output", "from": "ship", "fields": { "target": "notify" } },
     {
       "ref": "blocked", "kind": "output", "from": "pass", "branch": "no",
-      "fields": { "target": "notify", "message": "TBA 2 หยุด: TBQA พบปัญหา ดูรายงานของ TBQA แล้วส่งกลับ TBA Brusher" }
+      "fields": { "target": "notify", "message": "TBA 2 หยุด: TBQA พบปัญหา ดูรายงานของ TBQA แล้วส่งกลับ TBA Flusher" }
     }
   ]
 }
