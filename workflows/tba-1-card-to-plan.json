@@ -1,0 +1,24 @@
+{
+  "title": "TBA 1: Jira card → design plan → subtasks",
+  "note": "Nodes use agentKey (see agents/agents.json). SETUP.md maps each agentKey to the real agentId from list_agents, then builds the workflow with edit_workflow: one add op per node (ref = node ref; use from for the first incoming edge, connect for others; branch yes/no on condition edges).",
+  "nodes": [
+    { "ref": "t", "kind": "trigger", "fields": { "trigger": "manual" } },
+    {
+      "ref": "intake", "kind": "agent", "from": "t", "agentKey": "taskscout",
+      "fields": { "task": "Intake for the Jira card whose key is in the input (for example RTRCDS-1234). Follow your role prompt and OPENBOT-ADAPTATION.md. Open the case, fetch the card (read only), report the intake summary and handoff block. Write nothing to Jira." }
+    },
+    {
+      "ref": "design", "kind": "agent", "from": "intake", "agentKey": "planman",
+      "fields": { "task": "Convene the Pre-Build Trial for the card in the intake handoff. No user is present in this run, so do not wait for answers: draft the files from the card and repo context and mark every guess with TODO (ยังไม่ confirm). Follow the Team conventions in OPENBOT-ADAPTATION.md: plan.md with a required mermaid sequence diagram, api-blueprint.md in the team // ENDPOINT pattern with realistic RESP read from the real entities, sequence.md, and the test personas. End your answer with the open questions and the proposed subtasks in the [REPO-NAME] Title format, saying which blueprint goes to which backend subtask. Do not post to Jira and do not create subtasks." }
+    },
+    {
+      "ref": "ok", "kind": "approval", "from": "design",
+      "fields": { "question": "ตรวจ plan.md และ subtask ที่เสนอแล้ว: อนุมัติให้โพสต์ plan เป็นคอมเมนต์ใน Jira และสร้าง subtask ตามรายการหรือไม่? (ถ้ายังมีคำถามค้าง ให้ปฏิเสธแล้วคุยกับ TBA PlanMan ต่อในแชทของเขา)" }
+    },
+    {
+      "ref": "post", "kind": "agent", "from": "ok", "agentKey": "taskscout",
+      "fields": { "task": "The user approved. With the Atlassian tools and the Team conventions in OPENBOT-ADAPTATION.md: check the plan has a mermaid sequenceDiagram and no blank line inside a fence, post the plan as a Jira comment, read it back once and report whether the diagram is one code block. Then create exactly the proposed subtasks (assign to the current user, copy the parent sprint), post each matching API blueprint as a comment on its backend subtask, and record each with case-state.mjs upsert-subtask and record-gate subtask-create. Do not change anything else. Report the comment, the subtask keys and any rendering problem." }
+    },
+    { "ref": "done", "kind": "output", "from": "post", "fields": { "target": "notify" } }
+  ]
+}

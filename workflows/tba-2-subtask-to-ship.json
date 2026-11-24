@@ -1,0 +1,32 @@
+{
+  "title": "TBA 2: Jira subtask → implement → audit/e2e → ship",
+  "note": "Nodes use agentKey (see agents/agents.json). Build with edit_workflow like tba-1. 'pass' is a condition: edge to 'ask' has branch yes, edge to 'blocked' has branch no.",
+  "nodes": [
+    { "ref": "t", "kind": "trigger", "fields": { "trigger": "manual" } },
+    {
+      "ref": "build", "kind": "agent", "from": "t", "agentKey": "brusher",
+      "fields": { "task": "Implement the Jira subtask whose key is in the input (parent case state in .tba/cases/<PARENT>/plan.md and api-blueprint.md). Follow your role prompt and OPENBOT-ADAPTATION.md. The blueprint and plan are a contract: add nothing outside them, and stop with a question if more seems needed. If a sibling subtask branch in the same repo is unshipped, report that and ask which branch strategy to use before building. Code plus unit tests, verify locally. Do not commit, push or touch Jira. End with the handoff block." }
+    },
+    {
+      "ref": "audit", "kind": "agent", "from": "build", "agentKey": "tbqa",
+      "fields": { "task": "Audit the subtask from the Field Agent handoff: re-run tests, check regressions, review the diff, and diff the blueprint against the implementation (endpoint, method, status code, response fields). For a front-end subtask, report the e2e preflight checklist from OPENBOT-ADAPTATION.md, then generate specs and smoke-run them only if the preflight allows. Do not edit code. State clearly READY TO SHIP or BLOCKED with reasons." }
+    },
+    {
+      "ref": "pass", "kind": "condition", "from": "audit",
+      "fields": { "rule": "TBQA reported READY TO SHIP: no failing tests, no regressions and no secret leak." }
+    },
+    {
+      "ref": "ask", "kind": "approval", "from": "pass", "branch": "yes",
+      "fields": { "question": "Audit ผ่าน: อนุมัติให้ย้าย subtask นี้เป็น Done ใน Jira หรือไม่? (ตามกติกาทีม subtask ไป Done ส่วน READY TO TEST ใช้กับ Story เท่านั้น) การ commit และ push ยังเป็นของคุณ" }
+    },
+    {
+      "ref": "ship", "kind": "agent", "from": "ask", "agentKey": "taskscout",
+      "fields": { "task": "The user approved. Read the available transitions of the subtask with the Atlassian tools and move it to Done (if no direct transition exists, stop and report the path instead of guessing). Record it with case-state.mjs record-gate ship-subtask. Change nothing else." }
+    },
+    { "ref": "ok", "kind": "output", "from": "ship", "fields": { "target": "notify" } },
+    {
+      "ref": "blocked", "kind": "output", "from": "pass", "branch": "no",
+      "fields": { "target": "notify", "message": "TBA 2 หยุด: TBQA พบปัญหา ดูรายงานของ TBQA แล้วส่งกลับ TBA Brusher" }
+    }
+  ]
+}

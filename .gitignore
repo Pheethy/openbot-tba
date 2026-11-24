@@ -1,0 +1,7 @@
+.tba/
+node_modules/
+.env
+.env.*
+*.key
+config.json
+.DS_Store
