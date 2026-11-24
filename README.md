@@ -8,7 +8,7 @@
 |---|---|
 | **เอเจนต์ 5 ตัว** | `TBA TaskScout` (รับการ์ดจาก Jira), `TBA PlanMan` (ออกแบบ + API blueprint + sequence diagram), `TBA Flusher` (เขียนโค้ด + unit test), `TBA BugsJaeger` (debug หา root cause แล้วออกแบบวิธีแก้), `TBQA` (ตรวจ + e2e) |
 | **Workflow 3 ตัว** | `TBA 1` card → plan → subtasks, `TBA 2` subtask → implement → audit → ship, `TBA 3` bug → debug → fix → verify (BugsJaeger → Flusher → TBQA) |
-| **สกิล** | `caveman` ให้ทุกตัวพูดสั้นตรงประเด็น (ภาษาไทย ศัพท์เทคนิคอังกฤษ), `debug-mantra` วินัย debug 4 ข้อให้ BugsJaeger |
+| **สกิล** | `caveman` ให้ทุกตัวพูดสั้นตรงประเด็น (ภาษาไทย ศัพท์เทคนิคอังกฤษ), `debug-mantra` วินัย debug 4 ข้อให้ BugsJaeger, `tba-brainstorming` วิธีคุยออกแบบให้ PlanMan (ดัดแปลงจาก [obra/superpowers](https://github.com/obra/superpowers) MIT) |
 | **กฎทีม** | `tba/OPENBOT-ADAPTATION.md` (ใช้ Atlassian MCP แทน token, convention ของทีม, จุดขออนุมัติ) |
 
 ## ติดตั้ง
@@ -49,7 +49,7 @@
 SETUP.md                  คำสั่งให้เอเจนต์ติดตั้ง
 agents/agents.json        สเปกเอเจนต์ 5 ตัว
 workflows/*.json          สเปก workflow 3 ตัว
-skills/*/SKILL.md         สกิล caveman, debug-mantra
+skills/*/SKILL.md         สกิล caveman, debug-mantra, tba-brainstorming
 tba/                      สคริปต์ Node, กฎ, prompt และคำสั่งอ้างอิงจาก plugin เดิม
 ```
 

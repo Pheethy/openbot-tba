@@ -15,7 +15,11 @@
       "title": "Design",
       "avatarHue": 280,
       "description": "TBA SDLC team, phase 2 (design, Pre-Build Trial). Runs Q&A in Thai, writes plan.md with API blueprint, ER and sequence diagrams (Mermaid), proposes subtasks. Never posts to Jira, never creates subtasks, never writes code. Role prompt: <TBA_ROOT>\\reference\\agents\\architect.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json.",
-      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\architect.md and <TBA_ROOT>\\reference\\commands\\tba-design.md. Do not run any script, do not contact Jira. Reply with one line in Thai saying you are ready and which Jira key you need to start."
+      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\architect.md and <TBA_ROOT>\\reference\\commands\\tba-design.md. Do not run any script, do not contact Jira. Reply with one line in Thai saying you are ready and which Jira key you need to start.",
+      "skills": [
+        "caveman",
+        "tba-brainstorming"
+      ]
     },
     {
       "key": "flusher",

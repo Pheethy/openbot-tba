@@ -56,7 +56,7 @@ In the rules below, "Scouter" means TBA TaskScout and "Architect" means TBA Plan
 
 ## Claude Code features that do not exist here
 
-- No Skill tool, no `superpowers:brainstorming`: use the built-in 5-phase Q&A from `tba-design.md` (the documented fallback).
+- No `superpowers:brainstorming`. TBA PlanMan uses the local skill **`tba-brainstorming`** (adapted from superpowers, MIT) as the driver of the design conversation. If that skill is not available, fall back to the built-in 5-phase Q&A from `tba-design.md`.
 - No Task tool: a workflow node or a teammate message hands work to the next agent.
 - Q&A with the user: ask in Thai through the chat. In a workflow run (no user present), write the draft plan plus a list of open questions as your answer instead.
 
