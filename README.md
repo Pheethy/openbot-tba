@@ -23,7 +23,12 @@
 | `TBA BugsJaeger` | หาสาเหตุบั๊ก | ✓ | — | — | ✓ | — |
 | `TBQA` | ตรวจ + review + e2e | ✓ | — | — | — | ✓ |
 
-- สกิลอยู่ใน `skills/` พร้อมที่มา ผู้เขียน และ license ใน `skills/skills.json` (บางตัวยังไม่ระบุ license หรือผู้เขียนต้นฉบับ: ตรวจก่อนทำ repo เป็น Public)
+- สกิลอยู่ใน `skills/` พร้อมที่มา ผู้เขียน และ license ใน `skills/skills.json` สถานะ license ที่ตรวจแล้ว (2026-11-24):
+  - `caveman`: **Apache-2.0** (Julius Brussee) แนบ LICENSE และ NOTICE ไว้ใน `skills/caveman/references/` ชื่อ "Caveman" เป็นเครื่องหมายการค้าของผู้เขียน repo นี้ไม่ได้เกี่ยวข้องหรือได้รับการรับรองจากเขา
+  - `tba-brainstorming`: ดัดแปลงจาก obra/superpowers **MIT** (Jesse Vincent) แนบ license ไว้
+  - `ponytail`: ระบุ MIT ในไฟล์เอง ไม่มีชื่อผู้เขียน (ตรวจที่มาไม่ได้)
+  - `debug-mantra`, `scrutinize`: คัดลอกจาก [thananon/9arm-skills](https://github.com/thananon/9arm-skills) ซึ่ง **ไม่มี license** ผู้เขียนสงวนสิทธิ์ตามค่าเริ่มต้น **ห้ามเผยแพร่ใน repo สาธารณะโดยไม่ได้รับอนุญาต**
+- ก่อนเปิด repo เป็น Public รัน `node scripts/check-bundle.mjs --public` สคริปต์จะล้มถ้ายังมีสกิลที่ไม่มี license
 - เพิ่มหรือเปลี่ยนสกิลของเอเจนต์: แก้ `agents/agents.json`, ใส่โฟลเดอร์สกิลใน `skills/`, เพิ่มแถวใน `skills/skills.json` แล้วรัน `node scripts/check-bundle.mjs` (อ่านอย่างเดียว ตรวจว่าสกิล เอเจนต์ และ workflow สอดคล้องกัน, description ไม่เกิน 500 ตัวอักษร, ไม่มี token หรือพาธเครื่อง)
 ## ติดตั้ง
 

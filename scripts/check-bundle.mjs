@@ -45,6 +45,21 @@ for (const s of catalog?.skills || []) {
 }
 for (const n of onDisk) if (!cataloged.has(n)) bad(`skills/${n} is not listed in skills/skills.json`);
 
+// license status of every skill; --public makes unresolved ones a failure
+const publicMode = process.argv.includes('--public');
+const okStatus = ['verified', 'self-declared', 'no-license', 'unknown'];
+const notForPublic = [];
+for (const s of catalog?.skills || []) {
+  if (!okStatus.includes(s.licenseStatus)) { bad(`skills/skills.json: '${s.name}' needs licenseStatus (${okStatus.join(' | ')})`); continue; }
+  if (s.licenseStatus === 'verified' && /Apache|MIT, Copyright/.test(s.license || '')) {
+    const refs = path.join(skillsDir, s.name, 'references');
+    const hasLicense = existsSync(refs) && readdirSync(refs).some((f) => /licen[sc]e/i.test(f));
+    if (!hasLicense) bad(`skills/${s.name}: license is "verified" but no LICENSE file is in skills/${s.name}/references/`);
+  }
+  if (s.licenseStatus === 'no-license' || s.licenseStatus === 'unknown') notForPublic.push(s);
+}
+if (publicMode) for (const s of notForPublic) bad(`--public: skill '${s.name}' has no license (${s.licenseStatus}); do not publish it without the author's permission`);
+
 // --- agents
 const agents = readJson('agents/agents.json')?.agents || [];
 const keys = new Set();
@@ -100,6 +115,9 @@ for (const file of walk(root)) {
 console.log('Agent x skills');
 for (const a of agents) console.log(`  ${(a.name || a.key).padEnd(16)} ${(a.skills || []).join(', ')}`);
 console.log(`Skills on disk: ${onDisk.join(', ')}`);
+console.log('License status');
+for (const s of catalog?.skills || []) console.log(`  ${s.name.padEnd(18)} ${s.licenseStatus || '?'}`);
+if (!publicMode && notForPublic.length) console.log(`  (not ready for a public repo: ${notForPublic.map((s) => s.name).join(', ')}. Run with --public to enforce.)`);
 if (problems.length) {
   console.log(`\n${problems.length} problem(s):`);
   for (const p of problems) console.log(`  - ${p}`);

@@ -1,0 +1,19 @@
+Caveman
+Copyright 2026 Julius Brussee
+
+This folder contains an unmodified copy of skills/caveman/SKILL.md from
+https://github.com/JuliusBrussee/caveman
+(last upstream commit touching that file: 2178ed6495c3c0ecd7d037e60acf3b1d0c554b97,
+2026-10-06; compared byte for byte on 2026-11-24).
+
+The upstream repository is licensed under the Apache License, Version 2.0 (see
+LICENSE in this folder, a verbatim copy of the upstream root LICENSE). The file
+has not been changed, so there is no modification notice to add.
+
+"Caveman" and the Caveman logo are trademarks of Julius Brussee. The Apache
+License grants no trademark rights. The name is used here only to refer to the
+upstream skill. This bundle is not affiliated with or endorsed by the author.
+
+Upstream NOTICE also lists third-party software of other parts of that
+repository (the engine, CLI and browse modules). None of it is part of this
+folder.

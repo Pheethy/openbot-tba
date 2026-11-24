@@ -5,17 +5,19 @@
       "name": "caveman",
       "path": "skills/caveman",
       "purpose": "Terse reply style: answer first, no filler, every technical fact kept. Gives all agents a short Thai voice.",
-      "source": "provided by the repo owner (a pasted skill); original author not recorded",
-      "license": "not stated",
-      "testedRevision": 1
+      "source": "https://github.com/JuliusBrussee/caveman, skills/caveman/SKILL.md (unmodified copy, upstream commit 2178ed6495c3, compared 2026-11-24)",
+      "license": "Apache-2.0, Copyright 2026 Julius Brussee. License text and NOTICE are in skills/caveman/references/. The name \"Caveman\" is a trademark of the author (no affiliation or endorsement)",
+      "testedRevision": 1,
+      "licenseStatus": "verified"
     },
     {
       "name": "debug-mantra",
       "path": "skills/debug-mantra",
       "purpose": "Four-step debugging discipline (reproduce, fail path, falsify, ledger). Backbone of TBA BugsJaeger.",
-      "source": "provided by the repo owner (a pasted skill); original author not recorded",
-      "license": "not stated",
-      "testedRevision": 1
+      "source": "https://github.com/thananon/9arm-skills, skills/engineering/debug-mantra/SKILL.md (identical copy, upstream commit d714cb84f35e, compared 2026-11-24). Author: Arm Patinyasakdikul",
+      "license": "NONE in the upstream repository (no LICENSE file, no license field; checked 2026-11-24). All rights reserved by default: do not redistribute publicly without the author's permission",
+      "testedRevision": 1,
+      "licenseStatus": "no-license"
     },
     {
       "name": "tba-brainstorming",
@@ -23,7 +25,8 @@
       "purpose": "Design conversation for TBA PlanMan: read the card and repo first, fill a 5-area coverage ledger, ask only what the code cannot answer, offer approaches, write plan.md.",
       "source": "adapted from the brainstorming skill of https://github.com/obra/superpowers and merged with the 5-phase checklist of the TBA design command",
       "license": "MIT, Copyright (c) 2025 Jesse Vincent (text in skills/tba-brainstorming/references/superpowers-LICENSE.txt)",
-      "testedRevision": 3
+      "testedRevision": 3,
+      "licenseStatus": "verified"
     },
     {
       "name": "ponytail",
@@ -31,15 +34,17 @@
       "purpose": "Smallest complete change for TBA Flusher: reuse what exists, no extras. The approved plan stays the scope and tests stay required (see OPENBOT-ADAPTATION.md).",
       "source": "provided by the repo owner (a pasted skill); original author not recorded",
       "license": "MIT, as declared in the skill's own frontmatter (no copyright line available)",
-      "testedRevision": 1
+      "testedRevision": 1,
+      "licenseStatus": "self-declared"
     },
     {
       "name": "scrutinize",
       "path": "skills/scrutinize",
       "purpose": "Outsider code and plan review for TBQA. Secrets are never quoted and the user decides what to fix (see OPENBOT-ADAPTATION.md).",
-      "source": "provided by the repo owner (a pasted skill); original author not recorded. One word ('proposed') was removed from the description to fit the 500 character limit",
-      "license": "not stated",
-      "testedRevision": 1
+      "source": "https://github.com/thananon/9arm-skills, skills/engineering/scrutinize/SKILL.md (identical except one word removed from the description to fit 500 characters; upstream commit 1b222f2284ee, compared 2026-11-24). Author: Arm Patinyasakdikul",
+      "license": "NONE in the upstream repository (no LICENSE file, no license field; checked 2026-11-24). All rights reserved by default: do not redistribute publicly without the author's permission",
+      "testedRevision": 1,
+      "licenseStatus": "no-license"
     }
   ]
 }
