@@ -16,6 +16,7 @@ Agents read `TEAM-PROFILE.md` at the start of every task, after `OPENBOT-ADAPTAT
 | `BRANCH_PATTERN` | built by `branch.mjs` from the key, lower case | `feature/rtrcds-<id>` | `feature/<key-lowercase>` (e.g. `feature/rtred-123`) |
 | `E2E_REPO` | front-end repo that holds Playwright specs (per product in the table; `config.json` has one `e2e.repo`, so the agent uses the table value for the card's product) | `hc-my-career-web` | from the Products table |
 | `E2E_PATH_PATTERN` | where specs go | `e2e/playwright/sprint{N}/{KEY}` | `<fill>` |
+| `BUG_ISSUE_TYPES` | Jira issue type names that count as a bug; TaskScout routes them to BugsJaeger, other feature types to PlanMan | `Bug` | `<fill>` (e.g. `Bug`, `Defect`) |
 | `SUBTASK_DONE_STATUS` | status a finished subtask moves to | `Done` | `<fill>` |
 | `STORY_SHIP_STATUS` | status the main card moves to when shipped | `READY TO TEST` | `<fill>` |
 | `DOCS_REPO` | optional shared docs repo | `hc-my-career-docs` | `<fill or none>` |

@@ -1,24 +1,137 @@
 {
-  "title": "TBA 1: Jira card → design plan → subtasks",
-  "note": "Nodes use agentKey (see agents/agents.json). SETUP.md maps each agentKey to the real agentId from list_agents, then builds the workflow with edit_workflow: one add op per node (ref = node ref; use from for the first incoming edge, connect for others; branch yes/no on condition edges).",
+  "title": "TBA 1: Jira card → bug: debug → fix | feature: design → subtasks",
+  "note": "Nodes use agentKey (see agents/agents.json). SETUP.md maps each agentKey to the real agentId from list_agents, then builds the workflow with edit_workflow: one add op per node (ref = node ref; use from for the incoming edge, branch yes/no on condition edges). 'route' is a condition: yes goes to the bug chain (bdebug ...), no goes to the feature chain (design ...). The bug chain is the same as tba-3-bug-to-verify.json. The approval nodes are the gates of the tba-brainstorming skill.",
   "nodes": [
-    { "ref": "t", "kind": "trigger", "fields": { "trigger": "manual" } },
     {
-      "ref": "intake", "kind": "agent", "from": "t", "agentKey": "taskscout",
-      "fields": { "task": "Intake for the Jira card whose key is in the input (for example <PROJECT_KEY>-1234). Follow your role prompt, OPENBOT-ADAPTATION.md and TEAM-PROFILE.md. Open the case, fetch the card (read only), report the intake summary and handoff block. Write nothing to Jira." }
+      "ref": "t",
+      "kind": "trigger",
+      "fields": {
+        "trigger": "manual"
+      }
     },
     {
-      "ref": "design", "kind": "agent", "from": "intake", "agentKey": "planman",
-      "fields": { "task": "Convene the Pre-Build Trial for the card in the intake handoff. No user is present in this run, so do not wait for answers: draft the files from the card and repo context and mark every guess with TODO (ยังไม่ confirm). Follow the Team conventions in OPENBOT-ADAPTATION.md and the values in TEAM-PROFILE.md: plan.md with a required mermaid sequence diagram, api-blueprint.md in the team // ENDPOINT pattern with realistic RESP read from the real entities, sequence.md, and the test personas. End your answer with the open questions and the proposed subtasks in the [REPO-NAME] Title format, saying which blueprint goes to which backend subtask. Do not post to Jira and do not create subtasks." }
+      "ref": "intake",
+      "kind": "agent",
+      "from": "t",
+      "agentKey": "taskscout",
+      "fields": {
+        "task": "Intake for the Jira card whose key is in the input (for example <PROJECT_KEY>-1234). Follow your role prompt, OPENBOT-ADAPTATION.md and TEAM-PROFILE.md. Open the case, fetch the card (read only), report the intake summary and handoff block. Decide the route from the Jira issue type as the Routing at intake section says, and end the handoff with exactly one line: ROUTE: BUG → BugsJaeger or ROUTE: FEATURE → PlanMan (with the reason). Write nothing to Jira."
+      }
     },
     {
-      "ref": "ok", "kind": "approval", "from": "design",
-      "fields": { "question": "ตรวจ plan.md และ subtask ที่เสนอแล้ว: อนุมัติให้โพสต์ plan เป็นคอมเมนต์ใน Jira และสร้าง subtask ตามรายการหรือไม่? (ถ้ายังมีคำถามค้าง ให้ปฏิเสธแล้วคุยกับ TBA PlanMan ต่อในแชทของเขา)" }
+      "ref": "route",
+      "kind": "condition",
+      "from": "intake",
+      "fields": {
+        "rule": "TaskScout's handoff ends with ROUTE: BUG → BugsJaeger (the Jira issue type is a bug type)."
+      }
     },
     {
-      "ref": "post", "kind": "agent", "from": "ok", "agentKey": "taskscout",
-      "fields": { "task": "The user approved. With the Atlassian tools, the Team conventions in OPENBOT-ADAPTATION.md and the values in TEAM-PROFILE.md: check the plan has a mermaid sequenceDiagram and no blank line inside a fence, post the plan as a Jira comment, read it back once and report whether the diagram is one code block. Then create exactly the proposed subtasks (assign to the current user, copy the parent sprint), post each matching API blueprint as a comment on its backend subtask, and record each with case-state.mjs upsert-subtask and record-gate subtask-create. Do not change anything else. Report the comment, the subtask keys and any rendering problem." }
+      "ref": "design",
+      "kind": "agent",
+      "from": "route",
+      "agentKey": "planman",
+      "fields": {
+        "task": "Convene the Pre-Build Trial for the card in the intake handoff. No user is present in this run, so do not wait for answers: draft the files from the card and repo context and mark every guess with TODO (ยังไม่ confirm). Follow the Team conventions in OPENBOT-ADAPTATION.md and the values in TEAM-PROFILE.md: plan.md with a required mermaid sequence diagram, api-blueprint.md in the team // ENDPOINT pattern with realistic RESP read from the real entities, sequence.md, and the test personas. End your answer with the open questions and the proposed subtasks in the [REPO-NAME] Title format, saying which blueprint goes to which backend subtask. Do not post to Jira and do not create subtasks."
+      },
+      "branch": "no"
     },
-    { "ref": "done", "kind": "output", "from": "post", "fields": { "target": "notify" } }
+    {
+      "ref": "ok",
+      "kind": "approval",
+      "from": "design",
+      "fields": {
+        "question": "ตรวจ plan.md และ subtask ที่เสนอแล้ว: อนุมัติให้โพสต์ plan เป็นคอมเมนต์ใน Jira และสร้าง subtask ตามรายการหรือไม่? (ถ้ายังมีคำถามค้าง ให้ปฏิเสธแล้วคุยกับ TBA PlanMan ต่อในแชทของเขา)"
+      }
+    },
+    {
+      "ref": "post",
+      "kind": "agent",
+      "from": "ok",
+      "agentKey": "taskscout",
+      "fields": {
+        "task": "The user approved. With the Atlassian tools, the Team conventions in OPENBOT-ADAPTATION.md and the values in TEAM-PROFILE.md: check the plan has a mermaid sequenceDiagram and no blank line inside a fence, post the plan as a Jira comment, read it back once and report whether the diagram is one code block. Then create exactly the proposed subtasks (assign to the current user, copy the parent sprint), post each matching API blueprint as a comment on its backend subtask, and record each with case-state.mjs upsert-subtask and record-gate subtask-create. Do not change anything else. Report the comment, the subtask keys and any rendering problem."
+      }
+    },
+    {
+      "ref": "done",
+      "kind": "output",
+      "from": "post",
+      "fields": {
+        "target": "notify"
+      }
+    },
+    {
+      "ref": "bdebug",
+      "kind": "agent",
+      "from": "route",
+      "agentKey": "bugsjaeger",
+      "fields": {
+        "task": "Debug the bug card in TaskScout's handoff. Follow your role prompt, the debug-mantra skill and OPENBOT-ADAPTATION.md: recite the mantra, reproduce, find the fail path, falsify, keep the ledger. Write the diagnosis .tba/cases/<KEY>/debug.md. Remove every temporary probe. Do not design or write the fix, do not commit or push, do not write to Jira. End your answer with a handoff block for TBA PlanMan that stands alone, and state clearly SOLUTION READY (reliable repro, one surviving hypothesis, consistent ledger) or NEEDS INPUT with what is missing."
+      },
+      "branch": "yes"
+    },
+    {
+      "ref": "bready",
+      "kind": "condition",
+      "from": "bdebug",
+      "fields": {
+        "rule": "BugsJaeger stated SOLUTION READY: a reliable repro exists, one hypothesis survived its disproof, and debug.md names the root cause with what a fix must satisfy."
+      }
+    },
+    {
+      "ref": "bplan",
+      "kind": "agent",
+      "from": "bready",
+      "branch": "yes",
+      "agentKey": "planman",
+      "fields": {
+        "task": "Design the fix for the diagnosis in BugsJaeger's handoff and .tba/cases/<KEY>/debug.md. Follow your role prompt, the tba-brainstorming skill and the Debug flow section of OPENBOT-ADAPTATION.md. No user is present in this run, so do not wait for answers: run the repro once to confirm it still fails, fill the coverage ledger for what the fix touches from the code, lay out the approaches with trade-offs and a recommendation if there is more than one sensible fix, and write .tba/cases/<KEY>/fix-plan.md (chosen approach, files and functions, behavior after, what must not change, API blueprint blocks if an endpoint changes, sequence diagram if the flow changes, data fix if needed, regression test spec, deploy order, risks, provenance, TODO (ยังไม่ confirm) for guesses). Do not re-investigate the root cause; if the evidence does not hold, say so and state SENT BACK. Do not write the fix, do not commit or push, do not write to Jira. End with the open questions, the approaches with your recommendation, and a handoff block for TBA Flusher."
+      }
+    },
+    {
+      "ref": "bok",
+      "kind": "approval",
+      "from": "bplan",
+      "fields": {
+        "question": "ตรวจ fix-plan.md ที่ TBA PlanMan ออกแบบ (แนวทางที่แนะนำ, ไฟล์ที่จะแก้, สิ่งที่ห้ามเปลี่ยน, regression test): อนุมัติให้ TBA Flusher ลงมือแก้ตามแผนนี้หรือไม่? ถ้ามีคำถามค้างหรืออยากเลือกแนวทางอื่น ให้ปฏิเสธแล้วคุยกับ TBA PlanMan ต่อในแชทของเขา"
+      }
+    },
+    {
+      "ref": "bfix",
+      "kind": "agent",
+      "from": "bok",
+      "agentKey": "flusher",
+      "fields": {
+        "task": "Implement the fix from .tba/cases/<KEY>/fix-plan.md (design by TBA PlanMan, approved by the user) in the context of debug.md. The fix plan is a contract: change only what it lists, add the regression test, and stop with a question if more seems needed. Confirm the regression test failed before the fix and passes after, run the repo's tests, and make sure no [DBG-...] probe is left. Local only: do not commit, push or touch Jira. End with a handoff block for TBQA."
+      }
+    },
+    {
+      "ref": "bverify",
+      "kind": "agent",
+      "from": "bfix",
+      "agentKey": "tbqa",
+      "fields": {
+        "task": "Verify the fix from the handoff of TBA Flusher against .tba/cases/<KEY>/debug.md and fix-plan.md: re-run the repro and the whole test suite of the touched packages, check regressions, review the diff (root cause really fixed, nothing outside fix-plan.md, no [DBG-...] probe left, regression test fails without the fix and passes with it, blueprint blocks match if an endpoint changed), and run the QA checklist (e2e only if the front end is touched, with the preflight checklist). Do not edit code. State clearly READY TO SHIP or BLOCKED with reasons; say if you doubt the root cause (back to BugsJaeger) or the fix design (back to TBA PlanMan)."
+      }
+    },
+    {
+      "ref": "bdone",
+      "kind": "output",
+      "from": "bverify",
+      "fields": {
+        "target": "notify"
+      }
+    },
+    {
+      "ref": "bstop",
+      "kind": "output",
+      "from": "bready",
+      "branch": "no",
+      "fields": {
+        "target": "notify",
+        "message": "TBA 1 (สาย Bug) หยุด: TBA BugsJaeger ยังไม่มี diagnosis ที่พร้อมส่งต่อ (ไม่มี repro ที่เชื่อถือได้ หรือยังไม่มี hypothesis ที่รอด) ดูรายงานของ TBA BugsJaeger แล้วให้ข้อมูลเพิ่ม"
+      }
+    }
   ]
 }

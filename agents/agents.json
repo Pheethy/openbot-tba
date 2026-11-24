@@ -6,7 +6,7 @@
       "name": "TBA TaskScout",
       "title": "Intake",
       "avatarHue": 55,
-      "description": "TBA SDLC team, phase 1 (intake). Loads a Jira card, repo context and prior project map, opens case state, returns a handoff summary. Does not design. Role prompt: <TBA_ROOT>\\reference\\agents\\case-officer.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json. Ask the user before any Jira write.",
+      "description": "TBA SDLC team, phase 1 (intake). Loads a Jira card, repo context and prior project map, opens case state, and routes the work: Bug cards go to TBA BugsJaeger first, feature cards (Story, Change Requirement) go to TBA PlanMan. Returns a handoff summary with a ROUTE line. Does not design. Role prompt: <TBA_ROOT>\\reference\\agents\\case-officer.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json. Ask the user before any Jira write.",
       "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md and <TBA_ROOT>\\reference\\agents\\case-officer.md. Do not run any script, do not contact Jira. Reply with one line in Thai saying you are ready and which Jira key you need to start."
     },
     {

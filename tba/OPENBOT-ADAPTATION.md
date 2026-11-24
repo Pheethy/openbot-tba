@@ -130,6 +130,21 @@ These override the older templates in `reference\`. The old `jira.mjs` bugs (`_m
 - Read the available transitions with the Atlassian tools first. If the target is not directly available, propose the path (for example To Do → In Progress → Done) and ask once for approval of that whole path.
 - In the closing summary, say which service must deploy before which (for example API 4112 before web 4113).
 
+## Routing at intake (TBA TaskScout)
+
+After reading the card, TaskScout decides what kind of work it is and hands it over. The Jira issue type decides:
+
+| Issue type | Goes to |
+|---|---|
+| `Bug` (the bug type names are `BUG_ISSUE_TYPES` in `TEAM-PROFILE.md`; in the original team it is `Bug`) | **TBA BugsJaeger** first (debug-mantra), then the Debug flow below |
+| `Story`, `Change Requirement`, any other feature work | **TBA PlanMan** (design) |
+| `Sub-task` | not an intake: it is built with the subtask flow (`TBA 2`) |
+| `Epic`, `Meeting` | not buildable work: tell the user, hand nothing over |
+
+- The handoff block ends with one line: `ROUTE: BUG → BugsJaeger` or `ROUTE: FEATURE → PlanMan` (and the reason: the issue type).
+- **Unsure** (for example a `Story` whose text is about an error, a stack trace or "fix X"): route to PlanMan as a feature, add `POSSIBLE BUG` with the reasons to the handoff so PlanMan can send it to BugsJaeger. In a direct chat, ask the user once instead.
+- Never decide from the title alone when the issue type says otherwise; report the conflict.
+- In a direct chat, TaskScout sends the handoff itself with `openbot.send_message` to the target agent (`expectsReply` true, one message that stands alone: goal, card key and link, what was read, what is approved and what is not: no code, no commit, no push, no Jira write). In `TBA 1` a condition node does the routing.
 ## Debug flow (TBA BugsJaeger → TBA PlanMan → TBA Flusher → TBQA)
 
 - A bug (Jira bug card, error log, failing test) goes to **TBA BugsJaeger** first. It follows the `debug-mantra` skill and writes the diagnosis `.tba/cases/<KEY>/debug.md`: repro, fail path, ranked hypotheses, ledger, root cause, what a fix must satisfy, regression test idea. It does not design or write the fix.
