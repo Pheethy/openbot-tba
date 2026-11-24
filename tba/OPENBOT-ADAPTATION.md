@@ -130,15 +130,21 @@ These override the older templates in `reference\`. The old `jira.mjs` bugs (`_m
 - Read the available transitions with the Atlassian tools first. If the target is not directly available, propose the path (for example To Do → In Progress → Done) and ask once for approval of that whole path.
 - In the closing summary, say which service must deploy before which (for example API 4112 before web 4113).
 
-## Debug flow (TBA BugsJaeger → TBA Flusher → TBQA)
+## Debug flow (TBA BugsJaeger → TBA PlanMan → TBA Flusher → TBQA)
 
-- A bug (Jira bug card, error log, failing test) goes to **TBA BugsJaeger** first. It follows the `debug-mantra` skill and writes `.tba/cases/<KEY>/debug.md` (repro, fail path, ranked hypotheses, ledger, root cause, fix design, regression test, QA checklist).
+- A bug (Jira bug card, error log, failing test) goes to **TBA BugsJaeger** first. It follows the `debug-mantra` skill and writes the diagnosis `.tba/cases/<KEY>/debug.md`: repro, fail path, ranked hypotheses, ledger, root cause, what a fix must satisfy, regression test idea. It does not design or write the fix.
 - No reliable repro, or no surviving hypothesis: BugsJaeger stops and asks the user. It does not hand off.
-- When `debug.md` is complete, the work goes to **TBA Flusher**, who implements exactly the fix design and the regression test (local only, no commit, no push, no Jira write, nothing outside the design; stop and ask if more seems needed). Then **TBQA** re-runs the repro and all tests, checks regressions, and compares the diff with `debug.md` (root cause really fixed, nothing extra, no `[DBG-...]` probe left, regression test fails before and passes after).
-- TBQA states READY TO SHIP or BLOCKED. A blocked result goes back to TBA Flusher with the failing evidence; if TBQA doubts the root cause, it goes back to BugsJaeger.
-- Workflow: `TBA 3: bug → debug → fix → verify`. In a direct chat, the hand-offs use `openbot.send_message` (see `reference\agents\bugs-jaeger.md`).
+- Then **TBA PlanMan** designs the fix, with the `tba-brainstorming` skill:
+  - Run the repro once to confirm it still fails as `debug.md` says. Do not re-investigate the root cause. If the evidence does not hold, send it back to BugsJaeger with what you saw.
+  - Fill the coverage ledger only for what the fix touches (data model and migration or backfill of bad data, API surface, flow, edge cases, who else calls this code), from the code first. Ask the user only what the code cannot answer.
+  - When there is more than one sensible fix (for example a minimal guard against a proper change of contract), lay out the approaches with trade-offs and a recommendation. When there is one sensible fix, say so and go on with a short design.
+  - Write `.tba/cases/<KEY>/fix-plan.md`: chosen approach and why, files and functions to change, behavior after the fix, what must NOT change, API blueprint blocks if an endpoint changes (with new error codes), a sequence diagram of the corrected flow if the flow changes (also paste it in the chat, see Mermaid rules), data fix if needed, the regression test spec, deploy order, risks, provenance, `TODO (ยังไม่ confirm)` for guesses.
+  - Gate: the user approves `fix-plan.md` before anything goes to TBA Flusher. In `TBA 3` the approval node is that gate.
+- Then **TBA Flusher** implements exactly `fix-plan.md` and the regression test (local only, no commit, no push, no Jira write, nothing outside the plan; stop and ask if more seems needed).
+- Then **TBQA** re-runs the repro and all tests, checks regressions, and compares the diff with `debug.md` and `fix-plan.md` (root cause really fixed, nothing extra, no `[DBG-...]` probe left, regression test fails before and passes after).
+- TBQA states READY TO SHIP or BLOCKED. A blocked result goes back to TBA Flusher with the failing evidence; if the fix design looks wrong it goes to TBA PlanMan; if TBQA doubts the root cause, it goes to BugsJaeger.
+- Workflow: `TBA 3: bug → debug → design fix → approve → fix → verify`. In a direct chat, the hand-offs use `openbot.send_message` (see `reference\agents\bugs-jaeger.md`).
 - Moving a bug card to another status, or posting the result to Jira, is a Jira write: ask the user first.
-
 ## Handoff between agents
 
 - Write state with `scripts\case-state.mjs` and the plan to `.tba/cases/<KEY>/plan.md` in the target repo.
