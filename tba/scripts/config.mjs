@@ -9,33 +9,32 @@ import path from 'node:path';
 export const CONFIG_DIR = path.join(homedir(), '.tba');
 export const CONFIG_PATH = path.join(CONFIG_DIR, 'config.json');
 
+// Neutral defaults for the openbot-tba bundle: fill them in for YOUR team
+// (see TEAM-PROFILE.md). jira.email/token stay empty: Jira goes through the
+// Atlassian MCP, so no token is needed for the OpenBot agents.
 export const DEFAULTS = {
   jira: {
-    site: 'digital-and-technology.atlassian.net',
+    site: '',            // e.g. your-company.atlassian.net
     email: '',
     token: '',
-    project: 'RTRCDS',
+    project: '',         // e.g. PROJ
     transitions: {
       readyToTest: 'READY TO TEST',
       inProgress: 'In Progress',
     },
   },
   docs: {
-    localPath: path.join(
-      homedir(),
-      'go/src/gitlab.thaibevapp.com/my-career/hc-my-career-docs'
-    ),
+    localPath: '',       // optional shared docs repo
   },
   workspace: {
-    root: path.join(homedir(), 'go/src/gitlab.thaibevapp.com/my-career'),
-    repoPrefix: 'hc-my-career-',
+    root: path.join(homedir(), 'work'),   // folder that holds all your repos
+    repoPrefix: '',                         // e.g. 'hc-xx-' ; empty = every folder
   },
   e2e: {
-    repo: 'hc-my-career-web',
+    repo: '',                               // front-end repo that holds e2e specs
     pathPattern: 'e2e/playwright/sprint{N}/{KEY}',
   },
 };
-
 export function configExists() {
   return existsSync(CONFIG_PATH);
 }
@@ -55,7 +54,7 @@ export async function saveConfig(config) {
 }
 
 // CLI: node config.mjs show | init | path
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === (await import('node:url')).pathToFileURL(process.argv[1]).href) {
   const cmd = process.argv[2] || 'show';
   if (cmd === 'show') {
     const c = await loadConfig();

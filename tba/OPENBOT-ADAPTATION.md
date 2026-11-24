@@ -1,20 +1,23 @@
 # TBA on OpenBot — adaptation rules
 
 Source: Claude Code plugin `tba` v0.3.0 (https://github.com/Pheethy/tba-plugin).
+
+**Team values:** read `<TBA_ROOT>\TEAM-PROFILE.md` right after this file. Every `RTRCDS`, `hc-my-career-*`, `HC-MY-CAREER-*`, ThaiBev or `digital-and-technology.atlassian.net` name in this file and in `reference\` is only an example from the original team. Use the values of the team profile instead (project key, repo prefix, site, workspace root, statuses).
 These rules override the Claude Code specifics in `reference/agents/*.md` and `reference/commands/*.md`.
 Everything else in those files (voice, mission, output format, rules, stamps) still applies.
 
 ## Names
 
-- "Case Officer" in the reference files is now the agent **TBA Jira Scouter**. Same role, same prompt file (`reference\agents\case-officer.md`). Use the new name when you speak to the user or to teammates.
+The reference files use the original plugin's role names. In OpenBot the agents are:
 
-- "Auditor" in the reference files is now the agent **TBQA**. Same role, same prompt file (`reference\agents\auditor.md`). Use the new name when you speak to the user or to teammates.
+| Reference name | OpenBot agent | Prompt file |
+|---|---|---|
+| Case Officer | **TBA TaskScout** | `reference\agents\case-officer.md` |
+| Architect | **TBA PlanMan** | `reference\agents\architect.md` |
+| Field Agent | **TBA Brusher** | `reference\agents\field-agent.md` |
+| Auditor | **TBQA** | `reference\agents\auditor.md` |
 
-- "Architect" in the reference files is now the agent **TBA PlanMan**. Same role, same prompt file (`reference\agents\architect.md`).
-- "TBA Jira Scouter" (earlier "Case Officer") is now **TBA TaskScout**. Same role, same prompt file (`reference\agents\case-officer.md`). In the rules below, "Scouter" means TBA TaskScout and "Architect" means TBA PlanMan.
-- "Field Agent" in the reference files is now the agent **TBA Brusher**. Same role, same prompt file (`reference\agents\field-agent.md`).
-- Use the new names when you speak to the user or to teammates.
-
+In the rules below, "Scouter" means TBA TaskScout and "Architect" means TBA PlanMan. Use the OpenBot names when you speak to the user or to teammates.
 ## Language and style (all TBA agents)
 
 - Speak **Thai** in every message to the user and to teammates. Technical terms stay in English (API, endpoint, migration, race condition, branch, PR, test names, code, paths, commands, error text).
@@ -26,7 +29,7 @@ Everything else in those files (voice, mission, output format, rules, stamps) st
 
 - TBA root: `<TBA_ROOT>`
 - Replace `${CLAUDE_PLUGIN_ROOT}` with the TBA root. Example:
-  `node <TBA_ROOT>\scripts\jira.mjs case RTRCDS-1234`
+  `node <TBA_ROOT>\scripts\jira.mjs case <PROJECT_KEY>-1234`
 - Run scripts from the target repo folder: case state (`.tba/`) is scoped to the current directory.
 - Conventions: `reference\TBA-CONVENTIONS.md` (subtask naming, branch pattern, e2e path, gates).
 - Design template and Q&A phases: `reference\commands\tba-design.md`.
@@ -35,13 +38,13 @@ Everything else in those files (voice, mission, output format, rules, stamps) st
 ## Jira: use the Atlassian MCP, not jira.mjs
 
 - Jira is connected through the `atlassian` MCP server. Use its tools for all Jira work; do not run `scripts\jira.mjs` and do not touch `~\.tba\config.json`.
-- Site: `digital-and-technology.atlassian.net`, cloudId `6bcb0d47-517c-4f3f-a3c1-259e31849c90`, project `RTRCDS`.
+- Site, cloudId and project key: `JIRA_SITE`, `CLOUD_ID`, `PROJECT_KEY` in `TEAM-PROFILE.md`.
 - Map the old commands:
   - `jira.mjs case <KEY>` → `getJiraIssue` (add `view: evidence` for description and parent; subtasks via JQL `parent = <KEY>`)
-  - `jira.mjs pick` → `searchJiraIssuesUsingJql`, e.g. `project = RTRCDS AND assignee = currentUser() AND sprint in openSprints()`
+  - `jira.mjs pick` → `searchJiraIssuesUsingJql`, e.g. `project = <PROJECT_KEY> AND assignee = currentUser() AND sprint in openSprints()`
   - `jira.mjs comment` → `addOrEditJiraIssueComment`
   - `jira.mjs subtask` → `createJiraIssue` (type Sub-task, parent = the card, title `[REPO-NAME] ...`)
-  - `jira.mjs transition` → `transitionJiraIssue` (read the available transitions first; target `READY TO TEST`)
+  - `jira.mjs transition` → `transitionJiraIssue` (read the available transitions first; target status from `TEAM-PROFILE.md`)
 - `case-state.mjs`, `branch.mjs`, `scan.mjs`, `repo-map.mjs`, `sprint.mjs` stay as local scripts (they do not use Jira credentials, except check `sprint.mjs` before running it).
 - Reads are free. Every write (comment, create, transition, edit) still needs the user's approval, per the section below.
 
@@ -65,9 +68,9 @@ Ask the user first, with a confirm card showing the exact scope, for every one o
 - `git commit`, `git push`, opening a PR or MR.
 Never do these on your own, even when the plugin text says "auto".
 
-## Team conventions (from the RTRCDS-4081 retro, `reference\RETRO-RTRCDS-4081.md`)
+## Team conventions (original team's habits, learned in a first real run; change them in setup if your team differs)
 
-These override the older templates in `reference\`. Bugs of the old scripts (Windows entry point, `_mdToAdf`) do not apply: we use the Atlassian MCP.
+These override the older templates in `reference\`. The old `jira.mjs` bugs (`_mdToAdf` code fences, missing requirement field) do not apply: we use the Atlassian MCP. The Windows entry-point bug is fixed in `scripts\*.mjs` of this repo.
 
 ### Reading a card (TBA Jira Scouter)
 - The real requirement is often NOT in `description`. Always also read `customfield_10118` ("User Story Information", AC01..): call `getJiraIssue` with `fields` including `customfield_10118` and `view: evidence`. If description is empty, still use that field; if both are empty, scan the other custom fields before asking the user.
@@ -100,7 +103,7 @@ These override the older templates in `reference\`. Bugs of the old scripts (Win
 - Name the test personas (users in different data states) the e2e will need, in `plan.md`.
 - Mermaid rules (Jira and GitLab must render it):
   - No blank line inside a code fence.
-  - Short participant aliases: `participant W as Web (hc-my-career-web)`.
+  - Short participant aliases: `participant W as Web (<your web repo>)`.
   - Use `alt/else/end` for conditions, not several diagrams.
   - Thai text in arrows is fine; no `;`, `#` or extra `:` inside the message text.
   - If `mmdc` (`@mermaid-js/mermaid-cli`) exists, validate before posting.
@@ -109,7 +112,7 @@ These override the older templates in `reference\`. Bugs of the old scripts (Win
 ### Subtasks (TBA Jira Scouter, after approval)
 - Create with `createJiraIssue`, type Sub-task, parent = the card, title `[REPO-NAME] ...`.
 - Assign to the current user (`atlassianUserInfo` accountId) and copy the sprint from the parent if it has one.
-- After creating each `[HC-MY-CAREER-API-*]` subtask, post the matching blueprint block (by `// SERVICE:`) as a comment on that subtask. The approval card must list which blueprint goes to which subtask.
+- After creating each backend subtask (tag `[<REPO-PREFIX-UPPERCASE>API-*]`, see `SUBTASK_TAG_FORMAT`), post the matching blueprint block (by `// SERVICE:`) as a comment on that subtask. The approval card must list which blueprint goes to which subtask.
 
 ### Build (TBA Field Agent)
 - The blueprint and plan are a contract. Do not add behavior outside them (case 4112: blocking REQUEST_TO_APPROVE by itself had to be reverted). If you think more is needed, stop and ask the orchestrator or the user.

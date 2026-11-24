@@ -22,6 +22,16 @@ Then replace the text `<TBA_ROOT>` with the real `TBA_ROOT` path in these files,
 - `TBA_ROOT\OPENBOT-ADAPTATION.md`
 - `agents\agents.json` (work on a copy, keep the repo file as it is)
 
+## 2b. Team profile (ask the user, do not guess)
+
+This repo comes from one team (ThaiBev, project `RTRCDS`, repos `hc-my-career-*`). The user's team is probably different (for example project `RTRED`, repos `hc-ed-*`). Every such name in `tba\reference\` is only an example.
+
+1. Read `tba\TEAM-PROFILE.template.md`. Ask the user for the missing values, in Thai, in one `AskUserQuestion` (up to 4 questions at a time, with a typed answer allowed): Jira site, project key, repo prefix, workspace root (folder that holds the repo clones), front-end e2e repo (or none), the status a finished subtask moves to and the status for the main card.
+2. Get `CLOUD_ID` by calling `getAccessibleAtlassianResources` (if Atlassian is connected) and match the user's site. If it is not connected yet, write `<fill after Atlassian is connected>` and tell the user.
+3. Write the filled table to `TBA_ROOT\TEAM-PROFILE.md` (copy of the template with the "Your value" column filled in; remove the instruction lines if you like). If the file exists, ask before overwriting.
+4. Read the team conventions section of `TBA_ROOT\OPENBOT-ADAPTATION.md` to the user in two lines (sequence diagram required, API blueprint per backend change, subtask goes to Done, Thai + caveman voice) and ask whether their team follows them. Change or delete the rules that do not apply.
+5. Create `~\.tba\config.json` only if it does not exist, with non-secret fields from the profile and no token: `{ "jira": { "site": "...", "email": "", "token": "", "project": "...", "transitions": { "readyToTest": "...", "inProgress": "In Progress" } }, "docs": { "localPath": "" }, "workspace": { "root": "...", "repoPrefix": "..." }, "e2e": { "repo": "...", "pathPattern": "e2e/playwright/sprint{N}/{KEY}" } }`. If it exists, do not open or change it. The local scripts (`case-state`, `branch`, `repo-map`, `scan`, `sprint`) read the workspace and e2e fields from it.
+
 ## 3. Install the caveman skill
 
 1. Copy `skills\caveman\` into your own workspace folder.

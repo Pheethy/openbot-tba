@@ -192,7 +192,7 @@ export const CaseState = {
 };
 
 // ─── CLI ──────────────────────────────────────────
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === (await import('node:url')).pathToFileURL(process.argv[1]).href) {
   const [cmd, ...rest] = process.argv.slice(2);
   try {
     switch (cmd) {

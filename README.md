@@ -29,9 +29,14 @@
 - ทุกการเขียนลง Jira (คอมเมนต์, สร้าง subtask, เปลี่ยนสถานะ) และ commit/push ต้องให้ผู้ใช้อนุมัติก่อน
 - สคริปต์ใน `tba/scripts/` ที่ยังอ่าน `~/.tba/config.json` (workspace root, e2e) ไม่ควรเอา token ไปใส่ถ้าไม่จำเป็น
 
-## ค่าเฉพาะของทีม (ต้องแก้ถ้าไม่ใช่ทีมเดียวกัน)
+## ตั้งค่าให้ตรงกับทีมของคุณ
 
-site `digital-and-technology.atlassian.net`, โปรเจกต์ `RTRCDS`, repo `hc-my-career-*`, รูปแบบ subtask `[REPO-NAME] ชื่อ`, API blueprint pattern (`tba/reference/example_api_blueprint.md`)
+ต้นฉบับมาจากทีมหนึ่ง (โปรเจกต์ `RTRCDS`, repo `hc-my-career-*`) ทีมอื่นเช่น `RTRED` / `hc-ed-*` ใช้ได้ โดยตอนติดตั้งเอเจนต์จะ **ถามค่าของทีมคุณ** แล้วเขียนลง `TEAM-PROFILE.md` ได้แก่ Jira site, project key, repo prefix, workspace root, repo e2e, สถานะที่ใช้ตอน ship (ดูตาราง `tba/TEAM-PROFILE.template.md`)
+
+- ชื่อ `RTRCDS` / `hc-my-career-*` ในโฟลเดอร์ `tba/reference/` เป็นแค่ตัวอย่างจากทีมเดิม เอเจนต์ถูกสั่งให้ใช้ค่าจาก `TEAM-PROFILE.md` แทน
+- สคริปต์ `tba/scripts` อ่านค่าจาก `~/.tba/config.json` (ค่าเริ่มต้นในชุดนี้ว่างเปล่า ไม่มีชื่อทีมเดิม)
+- **กฎทีมเดิมที่ติดมา:** ต้องมี sequence diagram, API blueprint ต่อ backend change, subtask ไป Done (READY TO TEST ใช้กับ Story), พูดไทยแบบ caveman ถ้าทีมคุณไม่ทำแบบนี้ เอเจนต์จะถามตอนติดตั้งและแก้กฎให้ตรง
+- รูปแบบ API blueprint อยู่ที่ `tba/reference/example_api_blueprint.md` เปลี่ยนเป็นตัวอย่างของทีมคุณได้
 
 ## สถานะ
 

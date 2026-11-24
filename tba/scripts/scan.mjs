@@ -130,7 +130,7 @@ export async function writeCache(cacheDir, data) {
 }
 
 // ─── CLI ──────────────────────────────────────────
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === (await import('node:url')).pathToFileURL(process.argv[1]).href) {
   const args = process.argv.slice(2);
   const jsonOnly = args.includes('--json');
   const multi = args.includes('--multi');

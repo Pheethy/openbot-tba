@@ -143,7 +143,7 @@ async function _detectBase(repoPath) {
 }
 
 // ─── CLI ──────────────────────────────────────────
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === (await import('node:url')).pathToFileURL(process.argv[1]).href) {
   const [key, ...rest] = process.argv.slice(2);
   if (!key) {
     console.error('Usage: branch.mjs <RTRCDS-KEY> [--base <branch>] [--force-dirty]');

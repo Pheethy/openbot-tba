@@ -256,7 +256,7 @@ function _truncate(s, max) {
 // ──────────────────────────────────────────────────────────────
 // Demo
 // ──────────────────────────────────────────────────────────────
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === (await import('node:url')).pathToFileURL(process.argv[1]).href) {
   const arg = process.argv[2];
   if (arg === 'demo') {
     const files = [

@@ -93,7 +93,7 @@ function _similarity(a, b) {
 }
 
 // ─── CLI ──────────────────────────────────────────
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === (await import('node:url')).pathToFileURL(process.argv[1]).href) {
   const cfg = await loadConfig();
   if (!cfg) {
     console.error('No config. Run /tba:brief first.');
