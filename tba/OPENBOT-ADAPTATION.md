@@ -108,6 +108,7 @@ These override the older templates in `reference\`. The old `jira.mjs` bugs (`_m
   - Use `alt/else/end` for conditions, not several diagrams.
   - Thai text in arrows is fine; no `;`, `#` or extra `:` inside the message text.
   - If `mmdc` (`@mermaid-js/mermaid-cli`) exists, validate before posting.
+  - **Show it in the chat.** The OpenBot chat draws a fenced ```mermaid``` block as a picture. When you present a design to the user, paste every diagram (sequence, ER) in your reply as a fenced mermaid block, not only in plan.md (a file is shown as text). For a big diagram, or one that needs more than the chat's own renderer, use `openbot.html_render` with a self-contained page that loads mermaid from a CDN, before your final reply, and do not repeat the diagram in text. If a diagram does not draw, the usual cause is a syntax error (a ;, # or extra : in a message, a blank line inside the fence): fix it and say what you fixed.
 - Posting to Jira: before the comment, check the plan has a mermaid `sequenceDiagram` block and no blank line inside any fence. After posting, read the comment back once and report whether the diagram arrived as one code block. Jira may not render mermaid; if it does not, say so and offer a link to the file instead.
 
 ### Subtasks (TBA Jira Scouter, after approval)
