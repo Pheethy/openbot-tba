@@ -1,11 +1,11 @@
 ---
 name: tba-brainstorming
-description: "Discovery conversation before designing any card, feature or change: find out what the user really wants and why, lay out approaches, play back, then write the design (plan.md). Built for TBA PlanMan, in Thai. Adapted from the brainstorming skill of obra/superpowers (MIT)."
+description: "Design conversation for a card or change: read the card and repo first, fill the 5-area coverage ledger (intent, data, API, flow, edge cases), ask only what the repo cannot answer, lay out approaches, play back, write plan.md. For TBA PlanMan, in Thai. Adapted from obra/superpowers brainstorming (MIT)."
 ---
 
 # TBA Brainstorming
 
-Adapted from the `brainstorming` skill of [obra/superpowers](https://github.com/obra/superpowers) (MIT License, Copyright (c) 2025 Jesse Vincent; license text in `references/superpowers-LICENSE.txt`). The method, the wording of the behavior-shaping parts and the Red Flags table follow the original on purpose. Changed for TBA: the output goes to `plan.md`, there is no visual-companion server, no spike, no `writing-plans` skill, the builder check is done by you, and the conversation is in Thai. See "In TBA" at the end.
+Adapted from the `brainstorming` skill of [obra/superpowers](https://github.com/obra/superpowers) (MIT License, Copyright (c) 2025 Jesse Vincent; license text in `references/superpowers-LICENSE.txt`). The method, the wording of the behavior-shaping parts and the Red Flags table follow the original on purpose. Merged with the 5-phase Q&A checklist of the TBA design command (intent, data model, API surface, flow, edge cases and risk) as a coverage ledger that you fill from the card and the repo before you ask anything. Changed for TBA: the output goes to `plan.md`, there is no visual-companion server, no spike, no `writing-plans` skill, the builder check is done by you, and the conversation is in Thai. See "In TBA" at the end.
 
 You are very good at building. You build what you believe your human
 partner wants, and that belief is usually thinner than it feels. This
@@ -49,6 +49,32 @@ reading until you can explain how the relevant parts work today and what this
 change would touch. Never ask what the project or their context already
 answers, or reopen what they've already decided.
 
+## Coverage Ledger (TBA's 5 phases, filled before you ask)
+
+A design is not final until five areas are each answered, so keep a private ledger with one row per area. Fill it by looking, not by asking. For every row, try the sources in this order and stop at the first that answers:
+
+1. the card: summary, description, acceptance criteria and the requirement custom fields
+2. the repo (or repos) the card touches: real entities and json tags, routes and handlers, auth and role middleware, response and error conventions, existing tests, front-end routes and components, migrations; use `.tba/cache/scan.json` and the repo map when they exist
+3. docs and earlier plans: the project map, `.tba/cases/*/plan.md` of related cards
+4. only then: ask the user
+
+| Area | What must be settled | Look here first |
+|---|---|---|
+| 1. Intent | the real goal beyond the AC, the main user (employee, planner, admin, HR), what success and failure look like, non-goals | the card, its parent and linked cards; ask only the **why** if the card does not say it |
+| 2. Data model | new or changed entities and fields, relations, migration, what existing tables it touches | entities, migrations, existing queries |
+| 3. API surface | which service and endpoints are new or changed, request and response shape, auth and role, error codes | routes, handlers, DTOs, middleware, sibling endpoints |
+| 4. Flow | user action → front end → backend → database → response; async parts, cron, webhooks | call sites, front-end pages, services, jobs |
+| 5. Edge cases and risk | concurrency, duplicates, timezone, null and empty, permissions, data states (for example "already launched last year"), dependency on other cards in progress | the code paths above, tests, other open cards of the same sprint |
+
+Mark each cell **Known** (say where from), **Proposed** (your call, with the reason; it goes into the design as yours), **Ask** (only the user can answer and the answer changes what gets built) or **N/A** (the change does not touch it; say so in a line).
+
+Rules:
+- **Never ask what the repo answers.** Which repo, which entity, which fields, which endpoint exists, which role guards it, which test pattern to follow: go and read.
+- **The repo is not on this computer.** Say so plainly in your first message, with the repo name and its product. The cells that need code become Proposed (from the card, marked as not checked against code) or Ask. Never invent entities, fields, endpoints or file paths; a blueprint built on guesses is marked `TODO (ยังไม่ confirm กับโค้ด)` on every line. Do not clone it yourself: ask the user for the path or for approval to clone.
+- **Edge cases are proposals, not questions.** Do not ask "what are the edge cases?". Derive the candidates from the code and the acceptance criteria and present them as a short list for the user to confirm, strike or add to.
+- **Question budget.** A card with clear acceptance criteria usually needs zero to three questions in total. Rank the Ask cells by how much the answer changes the build, ask the top one, and turn the rest into Proposed items marked `TODO (ยังไม่ confirm)`. If nothing is Ask, skip straight to laying out the approaches.
+- The ledger drives what you look at and what you ask. Do not show it as a form. Show its result: what you found, what you propose, what you still need.
+
 ## Your First Message
 
 Move the work forward, with one of these:
@@ -57,8 +83,7 @@ Move the work forward, with one of these:
   spec, a detailed request): aim for about 200 words for the whole message.
   Echo their request back in your own words, so they can see whether you've
   got its shape: what they want, who it's for, and why, as far as they've
-  said. Add what you found that bears on it: how the relevant parts work today
-  and what the change would touch. If you found something they may not have
+  said. Add what you found that bears on it (from the ledger: how the relevant parts work today, what the change would touch, and your proposals for the areas the card leaves open, each with its reason). If you found something they may not have
   considered that would change what they're asking for or how it has to be
   built, like a constraint, a conflict, or a cheaper path, say so plainly. How
   to build it comes later, once you understand what they want (see Lay out the
@@ -203,6 +228,8 @@ three ways you considered building it, what each trades off, which one
 they picked, and why. They pick in the conversation, before you write
 the doc.
 
+A small change skips the areas of the ledger it does not touch: write `N/A` with one line of why, do not ask about them.
+
 If it grows mid-task, stop, say so, and step up a size.
 
 If this is really several independent cards or products, say so, agree on an
@@ -219,6 +246,7 @@ from without going back to your human partner. Cover:
 - approaches (above)
 - the parts of the how they decided, as they decided them
 - what's left to the builder
+- a **Provenance** list: every decision tagged `ผู้ใช้ยืนยัน`, `จากโค้ด <file path>` or `ข้อเสนอของ PlanMan (<reason>)`, so the user and the builder see which parts are the user's and which are yours
 
 In TBA this is `.tba/cases/<KEY>/plan.md` in the target repo, following the
 template of `reference\commands\tba-design.md` and the Team conventions of
@@ -281,7 +309,7 @@ TBA TaskScout does it.
 ## In TBA
 
 - **Language:** talk to the user in Thai (technical terms stay in English), in the short style of the `caveman` skill. The written design (`plan.md` and friends) is plain full Thai sentences. Questions to the user are always full sentences.
-- **No user present** (a workflow run, `TBA 1`): do not wait. Do the recon, then write the draft design from the card and the repo, mark every guess `TODO (ยังไม่ confirm)`, and end the answer with the open questions (the "theirs" pile) and the proposed approaches with your recommendation. The approval node of the workflow, or the user in chat afterwards, plays the role of the conversation.
+- **No user present** (a workflow run, `TBA 1`): do not wait. Fill the coverage ledger from the card and the repo, write the draft design, mark every Proposed or Ask cell `TODO (ยังไม่ confirm)`, and end the answer with the open questions (the Ask cells and the "theirs" pile, ranked) and the proposed approaches with your recommendation. The approval node of the workflow, or the user in chat afterwards, plays the role of the conversation.
 - **Direct chat:** run the full conversation above, one question at a time.
 - **Never:** write product code, post to Jira, create subtasks, read or print `~\.tba\config.json`.
 - **Visual companion, spikes, `superpowers:writing-plans`:** not part of this version.
