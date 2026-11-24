@@ -11,6 +11,20 @@
 | **สกิล** | `caveman` ให้ทุกตัวพูดสั้นตรงประเด็น (ภาษาไทย ศัพท์เทคนิคอังกฤษ), `debug-mantra` วินัย debug 4 ข้อให้ BugsJaeger, `scrutinize` รีวิวโค้ดมุมคนนอกให้ TBQA (ห้ามเผย secret, ถามคุณก่อนแก้), `ponytail` โหมดเขียนโค้ดเปลี่ยนน้อยที่สุดที่แก้ครบให้ Flusher, `tba-brainstorming` วิธีคุยออกแบบให้ PlanMan (ดัดแปลงจาก [obra/superpowers](https://github.com/obra/superpowers) MIT) |
 | **กฎทีม** | `tba/OPENBOT-ADAPTATION.md` (ใช้ Atlassian MCP แทน token, convention ของทีม, จุดขออนุมัติ) |
 
+## เอเจนต์ × สกิล
+
+เอเจนต์แต่ละตัว **ต้องมี** สกิลตามตารางนี้ (แหล่งความจริงคือฟิลด์ `skills` ใน `agents/agents.json`) ตอนติดตั้ง เอเจนต์จะติดตั้งให้ครบแล้วตรวจกลับว่าไม่ขาดไม่เกิน
+
+| เอเจนต์ | บทบาท | `caveman` | `tba-brainstorming` | `ponytail` | `debug-mantra` | `scrutinize` |
+|---|---|---|---|---|---|---|
+| `TBA TaskScout` | รับการ์ด แยก Bug / Feature | ✓ | — | — | — | — |
+| `TBA PlanMan` | ออกแบบ / ออกแบบวิธีแก้ | ✓ | ✓ | — | — | — |
+| `TBA Flusher` | เขียนโค้ด + test | ✓ | — | ✓ | — | — |
+| `TBA BugsJaeger` | หาสาเหตุบั๊ก | ✓ | — | — | ✓ | — |
+| `TBQA` | ตรวจ + review + e2e | ✓ | — | — | — | ✓ |
+
+- สกิลอยู่ใน `skills/` พร้อมที่มา ผู้เขียน และ license ใน `skills/skills.json` (บางตัวยังไม่ระบุ license หรือผู้เขียนต้นฉบับ: ตรวจก่อนทำ repo เป็น Public)
+- เพิ่มหรือเปลี่ยนสกิลของเอเจนต์: แก้ `agents/agents.json`, ใส่โฟลเดอร์สกิลใน `skills/`, เพิ่มแถวใน `skills/skills.json` แล้วรัน `node scripts/check-bundle.mjs` (อ่านอย่างเดียว ตรวจว่าสกิล เอเจนต์ และ workflow สอดคล้องกัน, description ไม่เกิน 500 ตัวอักษร, ไม่มี token หรือพาธเครื่อง)
 ## ติดตั้ง
 
 1. เชื่อม **Atlassian (Jira)** ใน OpenBot ด้วยบัญชีของตัวเอง
@@ -49,7 +63,9 @@
 SETUP.md                  คำสั่งให้เอเจนต์ติดตั้ง
 agents/agents.json        สเปกเอเจนต์ 5 ตัว
 workflows/*.json          สเปก workflow 3 ตัว
-skills/*/SKILL.md         สกิล caveman, debug-mantra, tba-brainstorming, ponytail, scrutinize
+skills/*/SKILL.md         สกิล 5 ตัว (caveman, debug-mantra, tba-brainstorming, ponytail, scrutinize)
+skills/skills.json        ที่มาและ license ของแต่ละสกิล
+scripts/check-bundle.mjs  ตรวจความสอดคล้องของชุดแพ็ก (อ่านอย่างเดียว)
 tba/                      สคริปต์ Node, กฎ, prompt และคำสั่งอ้างอิงจาก plugin เดิม
 ```
 

@@ -1,11 +1,14 @@
 {
-  "note": "Specs of the 5 TBA agents. SETUP.md tells the installing agent to replace <TBA_ROOT> with the real folder, then call create_agent once per entry, then install on each the skills listed in its \"skills\" field (default: caveman).",
+  "note": "Specs of the 5 TBA agents. SETUP.md tells the installing agent to replace <TBA_ROOT> with the real folder, then call create_agent once per entry, then install on each agent exactly the skills listed in its 'skills' field (required, no defaults). The skills are in ../skills and described in ../skills/skills.json.",
   "agents": [
     {
       "key": "taskscout",
       "name": "TBA TaskScout",
       "title": "Intake",
       "avatarHue": 55,
+      "skills": [
+        "caveman"
+      ],
       "description": "TBA SDLC team, phase 1 (intake). Loads a Jira card, repo context and prior project map, opens case state, and routes the work: Bug cards go to TBA BugsJaeger first, feature cards (Story, Change Requirement) go to TBA PlanMan. Returns a handoff summary with a ROUTE line. Does not design. Role prompt: <TBA_ROOT>\\reference\\agents\\case-officer.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json. Ask the user before any Jira write.",
       "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md and <TBA_ROOT>\\reference\\agents\\case-officer.md. Do not run any script, do not contact Jira. Reply with one line in Thai saying you are ready and which Jira key you need to start."
     },
@@ -14,24 +17,24 @@
       "name": "TBA PlanMan",
       "title": "Design",
       "avatarHue": 280,
-      "description": "TBA SDLC team, phase 2 (design, Pre-Build Trial). Runs Q&A in Thai, writes plan.md with API blueprint, ER and sequence diagrams (Mermaid), proposes subtasks. Never posts to Jira, never creates subtasks, never writes code. Role prompt: <TBA_ROOT>\\reference\\agents\\architect.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json.",
-      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\architect.md and <TBA_ROOT>\\reference\\commands\\tba-design.md. Do not run any script, do not contact Jira. Reply with one line in Thai saying you are ready and which Jira key you need to start.",
       "skills": [
         "caveman",
         "tba-brainstorming"
-      ]
+      ],
+      "description": "TBA SDLC team, phase 2 (design, Pre-Build Trial). Runs Q&A in Thai, writes plan.md with API blueprint, ER and sequence diagrams (Mermaid), proposes subtasks. Never posts to Jira, never creates subtasks, never writes code. Role prompt: <TBA_ROOT>\\reference\\agents\\architect.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json.",
+      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\architect.md and <TBA_ROOT>\\reference\\commands\\tba-design.md. Do not run any script, do not contact Jira. Reply with one line in Thai saying you are ready and which Jira key you need to start."
     },
     {
       "key": "flusher",
       "name": "TBA Flusher",
       "title": "Implementation",
       "avatarHue": 30,
-      "description": "TBA SDLC team, phase 3 (build). Takes one Jira subtask: cuts the branch in the right repo, follows existing code patterns, writes code and unit tests, verifies locally. One subtask, one repo. Never commits, pushes or transitions Jira without the user's approval. Role prompt: <TBA_ROOT>\\reference\\agents\\field-agent.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json.",
-      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\field-agent.md and <TBA_ROOT>\\reference\\commands\\tba-implement.md. Do not run any script, do not touch any repo. Reply with one line in Thai saying you are ready and which subtask key you need to start.",
       "skills": [
         "caveman",
         "ponytail"
-      ]
+      ],
+      "description": "TBA SDLC team, phase 3 (build). Takes one Jira subtask: cuts the branch in the right repo, follows existing code patterns, writes code and unit tests, verifies locally. One subtask, one repo. Never commits, pushes or transitions Jira without the user's approval. Role prompt: <TBA_ROOT>\\reference\\agents\\field-agent.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json.",
+      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\field-agent.md and <TBA_ROOT>\\reference\\commands\\tba-implement.md. Do not run any script, do not touch any repo. Reply with one line in Thai saying you are ready and which subtask key you need to start."
     },
     {
       "key": "bugsjaeger",
@@ -50,12 +53,12 @@
       "name": "TBQA",
       "title": "QA and e2e",
       "avatarHue": 185,
-      "description": "TBA SDLC team, phase 4 (audit). Re-runs unit tests, checks regressions, reviews the diff critically, generates and smoke-runs Playwright e2e for front-end subtasks. Blocks on test failure or secret leak. Does not edit code and does not ship Jira on its own. Role prompt: <TBA_ROOT>\\reference\\agents\\auditor.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json.",
-      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\auditor.md and <TBA_ROOT>\\reference\\commands\\tba-e2e.md. Do not run any script, do not touch any repo. Reply with one line in Thai saying you are ready and which subtask key you need to start.",
       "skills": [
         "caveman",
         "scrutinize"
-      ]
+      ],
+      "description": "TBA SDLC team, phase 4 (audit). Re-runs unit tests, checks regressions, reviews the diff critically, generates and smoke-runs Playwright e2e for front-end subtasks. Blocks on test failure or secret leak. Does not edit code and does not ship Jira on its own. Role prompt: <TBA_ROOT>\\reference\\agents\\auditor.md. Rules that override Claude Code specifics: <TBA_ROOT>\\OPENBOT-ADAPTATION.md (read both, then <TBA_ROOT>\\TEAM-PROFILE.md, at the start of every task). Never read or print ~\\.tba\\config.json.",
+      "initialMessage": "Setup only. Read <TBA_ROOT>\\OPENBOT-ADAPTATION.md, <TBA_ROOT>\\TEAM-PROFILE.md, <TBA_ROOT>\\reference\\agents\\auditor.md and <TBA_ROOT>\\reference\\commands\\tba-e2e.md. Do not run any script, do not touch any repo. Reply with one line in Thai saying you are ready and which subtask key you need to start."
     }
   ]
 }

@@ -2,7 +2,7 @@
 
 You are an OpenBot agent. The user asked you to install the TBA team from this repo. Follow the steps in order. Report each step's result. Stop and ask the user when a step says so. Reply to the user in Thai (technical terms stay in English).
 
-This setup creates local files, 5 agents, 5 skills and 3 workflows on the user's own OpenBot. It does not touch Jira, git remotes or any repo. Do not run any `tba\scripts\*.mjs` during setup.
+This setup creates local files, 5 agents, 5 skills (each agent gets the skills listed for it) and 3 workflows on the user's own OpenBot. It does not touch Jira, git remotes or any repo. Do not run any `tba\scripts\*.mjs` during setup.
 
 ## 0. Check what the user has (read only, ask before assuming)
 
@@ -32,19 +32,23 @@ This repo comes from one team (ThaiBev, project `RTRCDS`, repos `hc-my-career-*`
 4. Read the team conventions section of `TBA_ROOT\OPENBOT-ADAPTATION.md` to the user in two lines (sequence diagram required, API blueprint per backend change, subtask goes to Done, Thai + caveman voice) and ask whether their team follows them. Change or delete the rules that do not apply.
 5. Create `~\.tba\config.json` only if it does not exist, with non-secret fields from the profile and no token: `{ "jira": { "site": "...", "email": "", "token": "", "project": "...", "transitions": { "readyToTest": "...", "inProgress": "In Progress" } }, "docs": { "localPath": "" }, "workspace": { "roots": ["<folder of product 1>", "<folder of product 2>"], "repoPrefix": ["<prefix 1>", "<prefix 2>"] }, "e2e": { "repo": "...", "pathPattern": "e2e/playwright/sprint{N}/{KEY}" } }`. If it exists, do not open or change it. The local scripts (`case-state`, `branch`, `repo-map`, `scan`, `sprint`) read the workspace and e2e fields from it. `repo-map` tries every folder in `roots`; a product that is not cloned yet may be listed anyway, it is reported as missing until the user clones it.
 
-## 3. Install the skills (caveman, debug-mantra, tba-brainstorming, ponytail, scrutinize)
+## 3. Install the skills
 
-1. For each folder in `skills\` (`caveman`, `debug-mantra`, `tba-brainstorming`, `ponytail`, `scrutinize`): copy it into your own workspace folder.
-2. Call `openbot.list_local_skills`. If a skill with the same name exists, use it; do not create a duplicate.
-3. Otherwise call `openbot.create_skill` with the workspace-relative path of the copied folder. Keep the returned skill id and revision of each.
+Which agent gets which skill is decided only by the `skills` field of each agent in `agents\agents.json` (required, no defaults). `skills\skills.json` describes each skill: purpose, source, license.
+
+1. Tell the user, in Thai, before you install: the skills that will be installed, which agent gets which, where each skill comes from and its license. Say plainly where the catalog says "not stated" or "original author not recorded".
+2. Optional and read-only: run `node scripts\check-bundle.mjs` in the repo folder. If it prints problems, report them and stop.
+3. For each folder in `skills\`: copy it into your own workspace folder.
+4. Call `openbot.list_local_skills`. If a skill with the same name exists, use it; do not create a duplicate. If its description differs from the one in the repo, tell the user and ask which one to keep.
+5. Otherwise call `openbot.create_skill` with the workspace-relative path of the copied folder. Keep the returned skill id and revision of each.
 
 ## 4. Create the 5 agents
 
 For each entry in the (replaced) `agents\agents.json`: call `openbot.create_agent` with `name`, `title`, `description`, `avatarHue` and `initialMessage`. Do not pass provider or model: the new agents use yours.
 Keep a map `key -> agentId`.
-Then for each new agent call `openbot.install_local_skill` for each skill in the entry's `skills` field (default: `caveman` only; `TBA BugsJaeger` also gets `debug-mantra`, `TBA PlanMan` also gets `tba-brainstorming`, `TBA Flusher` also gets `ponytail`, `TBQA` also gets `scrutinize`), with the skill id, its revision and the agent's id.
+Then for each new agent call `openbot.install_local_skill` for every skill in the entry's `skills` field, no more and no fewer, with the skill id, its revision and the agent's id.
 
-Check: call `openbot.list_agents` and confirm the 4 names exist. Do not wait for their setup replies; they answer in their own chats.
+Check: call `openbot.list_agents` and confirm the 5 names exist. Then call `openbot.read_agent` for each new agent and compare its installed skills with the `skills` field of its entry. Report every mismatch and fix it (install the missing skill); do not go on with a skill missing. Do not wait for the agents' setup replies; they answer in their own chats.
 
 ## 5. Build the 3 workflows
 

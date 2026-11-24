@@ -1,0 +1,45 @@
+{
+  "note": "Catalog of the skills in this folder: where each comes from and its license. Which agent gets which skill is decided only in agents/agents.json (field 'skills'). SETUP.md shows this list to the user before installing.",
+  "skills": [
+    {
+      "name": "caveman",
+      "path": "skills/caveman",
+      "purpose": "Terse reply style: answer first, no filler, every technical fact kept. Gives all agents a short Thai voice.",
+      "source": "provided by the repo owner (a pasted skill); original author not recorded",
+      "license": "not stated",
+      "testedRevision": 1
+    },
+    {
+      "name": "debug-mantra",
+      "path": "skills/debug-mantra",
+      "purpose": "Four-step debugging discipline (reproduce, fail path, falsify, ledger). Backbone of TBA BugsJaeger.",
+      "source": "provided by the repo owner (a pasted skill); original author not recorded",
+      "license": "not stated",
+      "testedRevision": 1
+    },
+    {
+      "name": "tba-brainstorming",
+      "path": "skills/tba-brainstorming",
+      "purpose": "Design conversation for TBA PlanMan: read the card and repo first, fill a 5-area coverage ledger, ask only what the code cannot answer, offer approaches, write plan.md.",
+      "source": "adapted from the brainstorming skill of https://github.com/obra/superpowers and merged with the 5-phase checklist of the TBA design command",
+      "license": "MIT, Copyright (c) 2025 Jesse Vincent (text in skills/tba-brainstorming/references/superpowers-LICENSE.txt)",
+      "testedRevision": 3
+    },
+    {
+      "name": "ponytail",
+      "path": "skills/ponytail",
+      "purpose": "Smallest complete change for TBA Flusher: reuse what exists, no extras. The approved plan stays the scope and tests stay required (see OPENBOT-ADAPTATION.md).",
+      "source": "provided by the repo owner (a pasted skill); original author not recorded",
+      "license": "MIT, as declared in the skill's own frontmatter (no copyright line available)",
+      "testedRevision": 1
+    },
+    {
+      "name": "scrutinize",
+      "path": "skills/scrutinize",
+      "purpose": "Outsider code and plan review for TBQA. Secrets are never quoted and the user decides what to fix (see OPENBOT-ADAPTATION.md).",
+      "source": "provided by the repo owner (a pasted skill); original author not recorded. One word ('proposed') was removed from the description to fit the 500 character limit",
+      "license": "not stated",
+      "testedRevision": 1
+    }
+  ]
+}
