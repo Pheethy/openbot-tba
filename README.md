@@ -33,6 +33,7 @@
 
 ต้นฉบับมาจากทีมหนึ่ง (โปรเจกต์ `RTRCDS`, repo `hc-my-career-*`) ทีมอื่นเช่น `RTRED` / `hc-ed-*` ใช้ได้ โดยตอนติดตั้งเอเจนต์จะ **ถามค่าของทีมคุณ** แล้วเขียนลง `TEAM-PROFILE.md` ได้แก่ Jira site, project key, repo prefix, workspace root, repo e2e, สถานะที่ใช้ตอน ship (ดูตาราง `tba/TEAM-PROFILE.template.md`)
 
+- **หลาย product ใต้ Jira project เดียว** (เช่น my-career, 360, bevy) รองรับ: ตอนติดตั้งเอเจนต์ถามทีละ product (repo prefix, โฟลเดอร์ที่ clone, repo e2e) สคริปต์หา repo ข้ามหลายโฟลเดอร์ได้ (`workspace.roots`) และ product ที่ยังไม่ได้ clone จะถูกรายงานว่าขาด ไม่ clone เอง
 - ชื่อ `RTRCDS` / `hc-my-career-*` ในโฟลเดอร์ `tba/reference/` เป็นแค่ตัวอย่างจากทีมเดิม เอเจนต์ถูกสั่งให้ใช้ค่าจาก `TEAM-PROFILE.md` แทน
 - สคริปต์ `tba/scripts` อ่านค่าจาก `~/.tba/config.json` (ค่าเริ่มต้นในชุดนี้ว่างเปล่า ไม่มีชื่อทีมเดิม)
 - **กฎทีมเดิมที่ติดมา:** ต้องมี sequence diagram, API blueprint ต่อ backend change, subtask ไป Done (READY TO TEST ใช้กับ Story), พูดไทยแบบ caveman ถ้าทีมคุณไม่ทำแบบนี้ เอเจนต์จะถามตอนติดตั้งและแก้กฎให้ตรง

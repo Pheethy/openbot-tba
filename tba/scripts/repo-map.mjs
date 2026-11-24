@@ -16,6 +16,7 @@
 import { loadConfig } from './config.mjs';
 import { readdirSync, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
+import { homedir } from 'node:os';
 
 const TAG_RE = /^\s*\[([A-Z0-9][A-Z0-9-]*)\]\s*(.*)$/;
 
@@ -33,10 +34,19 @@ export function parseTag(title) {
   return { rawTag, repoName, isDb, title: rest };
 }
 
+// workspace.roots (array of folders) is optional; workspace.root still works.
+// Use roots when the repos of several projects live in different folders.
+export function workspaceRoots(cfg) {
+  const w = cfg.workspace || {};
+  const list = Array.isArray(w.roots) && w.roots.length ? w.roots : [w.root];
+  return list.filter(Boolean).map(_expand);
+}
+
 export function listRepos(workspaceRoot, prefix) {
   if (!existsSync(workspaceRoot)) return [];
+  const prefixes = (Array.isArray(prefix) ? prefix : [prefix]).filter(Boolean);
   return readdirSync(workspaceRoot)
-    .filter((name) => !prefix || name.startsWith(prefix))
+    .filter((name) => !prefixes.length || prefixes.some((p) => name.startsWith(p)))
     .filter((name) => {
       const p = path.join(workspaceRoot, name);
       try {
@@ -52,13 +62,15 @@ export function resolveRepo(title, cfg) {
   if (!parsed) {
     return { ok: false, reason: 'no_tag', title, hint: 'Subtask title must start with [REPO-NAME]' };
   }
-  const workspace = _expand(cfg.workspace.root);
-  const repoPath = path.join(workspace, parsed.repoName);
-  if (existsSync(repoPath) && statSync(repoPath).isDirectory()) {
-    return { ok: true, ...parsed, repoPath, workspace };
+  const roots = workspaceRoots(cfg);
+  for (const workspace of roots) {
+    const repoPath = path.join(workspace, parsed.repoName);
+    if (existsSync(repoPath) && statSync(repoPath).isDirectory()) {
+      return { ok: true, ...parsed, repoPath, workspace };
+    }
   }
-  // suggest near matches
-  const all = listRepos(workspace, cfg.workspace.repoPrefix);
+  // suggest near matches across all roots
+  const all = roots.flatMap((r) => listRepos(r, cfg.workspace.repoPrefix));
   const near = all
     .map((n) => ({ name: n, score: _similarity(parsed.repoName, n) }))
     .sort((a, b) => b.score - a.score)
@@ -67,17 +79,17 @@ export function resolveRepo(title, cfg) {
     ok: false,
     reason: 'not_found',
     ...parsed,
-    attempted: repoPath,
-    workspace,
+    attempted: roots.map((r) => path.join(r, parsed.repoName)),
+    workspaces: roots,
     suggestions: near,
   };
 }
 
 function _expand(p) {
-  if (p.startsWith('~')) return path.join(process.env.HOME || '', p.slice(1));
+  if (p === '~') return homedir();
+  if (p.startsWith('~/') || p.startsWith('~\\')) return path.join(homedir(), p.slice(2));
   return p;
 }
-
 // Simple Dice coefficient for suggestion
 function _similarity(a, b) {
   if (a === b) return 1;
@@ -105,10 +117,10 @@ if (process.argv[1] && import.meta.url === (await import('node:url')).pathToFile
     process.exit(0);
   }
   if (cmd === 'list') {
-    const workspace = _expand(cfg.workspace.root);
-    const repos = listRepos(workspace, cfg.workspace.repoPrefix);
-    console.log(`Workspace: ${workspace}`);
-    for (const r of repos) console.log(`  ${r}`);
+    for (const workspace of workspaceRoots(cfg)) {
+      console.log(`Workspace: ${workspace}`);
+      for (const r of listRepos(workspace, cfg.workspace.repoPrefix)) console.log(`  ${r}`);
+    }
     process.exit(0);
   }
   const title = [cmd, ...rest].join(' ');
