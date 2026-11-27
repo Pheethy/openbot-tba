@@ -2,7 +2,7 @@
 
 You are an OpenBot agent. The user asked you to install the TBA team from this repo. Follow the steps in order. Report each step's result. Stop and ask the user when a step says so. Reply to the user in Thai (technical terms stay in English).
 
-This setup creates local files, 5 agents, 5 skills (each agent gets the skills listed for it) and 3 workflows on the user's own OpenBot. It does not touch Jira, git remotes or any repo. Do not run any `tba\scripts\*.mjs` during setup.
+This setup creates local files, 5 agents (grouped in a sidebar folder named `TBA`), 5 skills (each agent gets the skills listed for it) and 3 workflows on the user's own OpenBot. It does not touch Jira, git remotes or any repo. Do not run any `tba\scripts\*.mjs` during setup.
 
 ## 0. Check what the user has (read only, ask before assuming)
 
@@ -10,6 +10,7 @@ This setup creates local files, 5 agents, 5 skills (each agent gets the skills l
 2. Call `openbot.list_mcp_servers`. Is an `atlassian` server there and signed in? If not, tell the user to connect Jira (Atlassian) in OpenBot Marketplace > Apps, with their own account, and to enable it for the TBA agents later. Setup can continue without it, but the workflows cannot read Jira until it is connected.
 3. Call `openbot.list_agents`. If an agent already has one of these names, ask the user before creating a duplicate: `TBA TaskScout`, `TBA PlanMan`, `TBA Flusher`, `TBA BugsJaeger`, `TBQA`.
 4. Call `openbot.list_workflows`. Same check for the titles in `workflows\`.
+5. Call `openbot.list_sections`. Note whether a section named `TBA` already exists (step 4b puts the agents there).
 
 ## 1. Pick the install folder
 
@@ -49,6 +50,15 @@ Keep a map `key -> agentId`.
 Then for each new agent call `openbot.install_local_skill` for every skill in the entry's `skills` field, no more and no fewer, with the skill id, its revision and the agent's id.
 
 Check: call `openbot.list_agents` and confirm the 5 names exist. Then call `openbot.read_agent` for each new agent and compare its installed skills with the `skills` field of its entry. Report every mismatch and fix it (install the missing skill); do not go on with a skill missing. Do not wait for the agents' setup replies; they answer in their own chats.
+
+## 4b. Put the 5 agents in a folder named TBA
+
+The user may have other agents and groups on the same OpenBot, so keep the TBA team in its own sidebar folder (section).
+1. Call `openbot.list_sections`. If a section named `TBA` exists, reuse it (do not create a second one). If the user has a section with a similar name, ask which one to use.
+2. Otherwise call `openbot.create_section` with the name `TBA`.
+3. For each of the 5 new agents call `openbot.assign_agent_section` with the agent's id and the id of that section.
+4. Check: call `openbot.list_sections` and confirm all 5 names are inside `TBA`. Do not move, rename or delete any other agent or section. Only the user nests folders, so do not try to nest it.
+5. Teammates in the same folder get the TBA work first, so the handoffs between TaskScout, PlanMan, Flusher, BugsJaeger and TBQA stay inside the team.
 
 ## 5. Build the 3 workflows
 
