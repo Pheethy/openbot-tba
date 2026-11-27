@@ -5,6 +5,7 @@
 
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -90,6 +91,29 @@ for (const file of readdirSync(wfDir).filter((f) => f.endsWith('.json'))) {
     const src = wf.nodes.find((x) => x.ref === n.from);
     if (n.branch && src?.kind !== 'condition') bad(`workflows/${file}: node '${n.ref}' has a branch but '${n.from}' is not a condition`);
     if (src?.kind === 'condition' && !n.branch) bad(`workflows/${file}: node '${n.ref}' follows condition '${n.from}' without a branch`);
+  }
+}
+
+// --- rules file: no old agent names after a rename, enforcers exist, the checker passes its own tests
+{
+  const rulesFile = path.join(root, 'tba', 'OPENBOT-ADAPTATION.md');
+  if (!existsSync(rulesFile)) bad('tba/OPENBOT-ADAPTATION.md is missing');
+  else {
+    const rules = readFileSync(rulesFile, 'utf8').replace(/\r\n/g, '\n');
+    const afterNames = rules.replace(/## Names[\s\S]*?\n## /, '## ');   // the Names table maps old names to new ones on purpose
+    const stale = /\bTBA (Jira Scouter|Architect|Auditor|Field Agent|Brusher|HandMan|TaskScouter|Case Officer)\b|\bJira Scouter\b/g;
+    afterNames.split('\n').forEach((l) => {
+      for (const m of l.matchAll(stale)) bad(`tba/OPENBOT-ADAPTATION.md: old agent name "${m[0]}" (use the name in agents/agents.json; only the Names table may keep old names). Line: ${l.trim().slice(0, 70)}`);
+    });
+    for (const a of agents) if (!rules.includes(a.name)) bad(`tba/OPENBOT-ADAPTATION.md: agent '${a.name}' of agents.json is never named in the rules`);
+    for (const f of ['tba/scripts/check-plan.mjs', 'tba/scripts/test/check-plan.test.mjs', 'tba/reference/example_api_blueprint.md']) {
+      if (!existsSync(path.join(root, f))) bad(`${f} is missing but the rules table names it as an enforcer`);
+    }
+    const testDir = path.join(root, 'tba', 'scripts', 'test');
+    if (existsSync(testDir)) {
+      const r = spawnSync(process.execPath, ['--test', testDir], { encoding: 'utf8' });
+      if (r.status !== 0) bad('tba/scripts/test: the tests of check-plan.mjs fail (run: node --test tba/scripts/test). ' + (r.stdout || '').split('\n').filter((x) => /not ok|✖|Error/.test(x)).slice(0, 4).join(' | '));
+    }
   }
 }
 

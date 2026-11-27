@@ -73,11 +73,11 @@ Never do these on your own, even when the plugin text says "auto".
 
 These override the older templates in `reference\`. The old `jira.mjs` bugs (`_mdToAdf` code fences, missing requirement field) do not apply: we use the Atlassian MCP. The Windows entry-point bug is fixed in `scripts\*.mjs` of this repo.
 
-### Reading a card (TBA Jira Scouter)
+### Reading a card (TBA TaskScout)
 - The real requirement is often NOT in `description`. Always also read `customfield_10118` ("User Story Information", AC01..): call `getJiraIssue` with `fields` including `customfield_10118` and `view: evidence`. If description is empty, still use that field; if both are empty, scan the other custom fields before asking the user.
 - Warn in the intake report if the card is unassigned or not in a sprint.
 
-### Design (TBA Architect)
+### Design (TBA PlanMan)
 - **Sequence diagram is required** on the main card (`## Sequence`, a mermaid `sequenceDiagram`). A plan without one is not finished. Also save it as `.tba/cases/<KEY>/sequence.md`.
 - **API Blueprint is required for every backend change**, new or modified endpoint, in this exact team pattern, one block per endpoint, saved in `.tba/cases/<KEY>/api-blueprint.md`:
   The user's own example file is the source of truth: `reference\example_api_blueprint.md` (GET, POST, PUT, DELETE). Read it before writing a blueprint. Shape:
@@ -109,14 +109,14 @@ These override the older templates in `reference\`. The old `jira.mjs` bugs (`_m
   - Thai text in arrows is fine; no `;`, `#` or extra `:` inside the message text.
   - If `mmdc` (`@mermaid-js/mermaid-cli`) exists, validate before posting.
   - **Show it in the chat.** The OpenBot chat draws a fenced ```mermaid``` block as a picture. When you present a design to the user, paste every diagram (sequence, ER) in your reply as a fenced mermaid block, not only in plan.md (a file is shown as text). For a big diagram, or one that needs more than the chat's own renderer, use `openbot.html_render` with a self-contained page that loads mermaid from a CDN, before your final reply, and do not repeat the diagram in text. If a diagram does not draw, the usual cause is a syntax error (a ;, # or extra : in a message, a blank line inside the fence): fix it and say what you fixed.
-- Posting to Jira: before the comment, check the plan has a mermaid `sequenceDiagram` block and no blank line inside any fence. After posting, read the comment back once and report whether the diagram arrived as one code block. Jira may not render mermaid; if it does not, say so and offer a link to the file instead.
+- Posting to Jira: run `check-plan.mjs` (see "Rules and what enforces them"), and before the comment check the plan has a mermaid `sequenceDiagram` block and no blank line inside any fence. After posting, read the comment back once and report whether the diagram arrived as one code block. Jira may not render mermaid; if it does not, say so and offer a link to the file instead.
 
-### Subtasks (TBA Jira Scouter, after approval)
+### Subtasks (TBA TaskScout, after approval)
 - Create with `createJiraIssue`, type Sub-task, parent = the card, title `[REPO-NAME] ...`.
 - Assign to the current user (`atlassianUserInfo` accountId) and copy the sprint from the parent if it has one.
 - After creating each backend subtask (tag `[<REPO-PREFIX-UPPERCASE>API-*]`, see `SUBTASK_TAG_FORMAT`), post the matching blueprint block (by `// SERVICE:`) as a comment on that subtask. The approval card must list which blueprint goes to which subtask.
 
-### Build (TBA Field Agent)
+### Build (TBA Flusher)
 - The blueprint and plan are a contract. Do not add behavior outside them (case 4112: blocking REQUEST_TO_APPROVE by itself had to be reverted). If you think more is needed, stop and ask the orchestrator or the user.
 - Before building a subtask in a repo that already has an unshipped branch from a sibling subtask, ask the user: commit first, stack the branch, or reuse the branch.
 - **Code style: the `ponytail` skill, level `full`.** TBA Flusher writes the smallest complete change: reuse what the codebase already has, no extras nobody asked for. The team rules win where they conflict:
@@ -126,7 +126,7 @@ These override the older templates in `reference\`. The old `jira.mjs` bugs (`_m
   - Levels: `lite` and `ultra` only when the user asks for them in chat. Never push back (`ultra`) on a plan the user already approved.
   - The closing "what I skipped or did not check, and the risk" lines go into the handoff block, in Thai.
 
-### Audit and e2e (TBA Auditor)
+### Audit and e2e (TBQA)
 - Diff the blueprint against the implementation (endpoint, method, status code, response fields) and flag anything extra or missing.
 - Before generating or running e2e, report a preflight checklist: `@playwright/test` in `package.json`; Playwright MCP available; `e2e/playwright/.auth/admin.json` and the personas the specs need; web (`E2E_BASE_URL` or `:3000`) and API reachable; new backend endpoint not yet deployed means the API must run locally from that branch (needs `.env`). Say plainly what blocks a real run. Unknown selectors get `TODO(selector)`.
 - Persona convention: `personas.ts` plus roles in `admin.json`. Warn if the web `jest.config.ts` does not exclude `/e2e/`.
@@ -175,6 +175,27 @@ After reading the card, TaskScout decides what kind of work it is and hands it o
 - TBQA states READY TO SHIP or BLOCKED. A blocked result goes back to TBA Flusher with the failing evidence; if the fix design looks wrong it goes to TBA PlanMan; if TBQA doubts the root cause, it goes to BugsJaeger.
 - Workflow: `TBA 3: bug → debug → design fix → approve → fix → verify`. In a direct chat, the hand-offs use `openbot.send_message` (see `reference\agents\bugs-jaeger.md`).
 - Moving a bug card to another status, or posting the result to Jira, is a Jira write: ask the user first.
+## Rules and what enforces them
+
+A rule that only lives in this file is a request; a rule with a check is a fact. Run the check, do not judge by eye. The checks print file, line, rule id and the fix.
+
+| Rule | Enforced by |
+|---|---|
+| Main card plan has a mermaid `sequenceDiagram` (`plan.md`, `sequence.md`) | `check-plan.mjs`: `sequence-required` |
+| No blank line inside a mermaid fence; no `;` `#` `:` in an arrow message | `check-plan.mjs`: `mermaid-blank-line`, `mermaid-message-chars` |
+| Blueprint block has ENDPOINT, METHOD, SERVICE, and a real //RESP that is valid JSON, not `{...}` | `check-plan.mjs`: `blueprint-*` |
+| Request part of the blueprint is valid JSON (Go types like `*multipart.FileHeader` allowed) | `check-plan.mjs`: `blueprint-input-json` |
+| Subtask tags are `[REPO-NAME]` in upper case | `check-plan.mjs`: `subtask-format` |
+| Agent names in this file match `agents/agents.json` (no old names after a rename) | `scripts/check-bundle.mjs` |
+| Every agent has its skills listed, every skill is catalogued with a license, no secret pattern in the bundle | `scripts/check-bundle.mjs` |
+| Approvals, no push, no Jira write without the user, no secret values in output | prompt rule only (no check yet): say so when you rely on it |
+
+Use:
+- **TBA PlanMan**, before the handoff or before asking for approval: `node <TBA_ROOT>\scripts\check-plan.mjs .tba\cases\<KEY> --repo-prefix <REPO_PREFIX>`. Exit code 1 means fix the listed problems first; do not hand over a plan that fails. Do not "fix" the checker to make a plan pass: if a rule is wrong, tell the user.
+- **TBA TaskScout**, before posting a plan or blueprint to Jira: run the same command; if it fails, send the plan back to PlanMan instead of posting.
+- **TBQA**: run it again as part of the review and report the result line.
+- The tests of the checker are `node --test scripts\test\`. Each rule is proven on a mistake that really happened (the RTRCDS-4081 retro, the typos of `reference\example_api_blueprint.md`). When a team mistake repeats, add a rule and a test for it, in that order: failing test first.
+
 ## Handoff between agents
 
 - Write state with `scripts\case-state.mjs` and the plan to `.tba/cases/<KEY>/plan.md` in the target repo.

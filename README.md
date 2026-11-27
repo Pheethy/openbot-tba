@@ -29,7 +29,8 @@
   - `ponytail`: ระบุ MIT ในไฟล์เอง ไม่มีชื่อผู้เขียน (ตรวจที่มาไม่ได้)
   - `debug-mantra`, `scrutinize`: คัดลอกจาก [thananon/9arm-skills](https://github.com/thananon/9arm-skills) ซึ่ง **ไม่มี license** ผู้เขียนสงวนสิทธิ์ตามค่าเริ่มต้น **ห้ามเผยแพร่ใน repo สาธารณะโดยไม่ได้รับอนุญาต**
 - ก่อนเปิด repo เป็น Public รัน `node scripts/check-bundle.mjs --public` สคริปต์จะล้มถ้ายังมีสกิลที่ไม่มี license
-- เพิ่มหรือเปลี่ยนสกิลของเอเจนต์: แก้ `agents/agents.json`, ใส่โฟลเดอร์สกิลใน `skills/`, เพิ่มแถวใน `skills/skills.json` แล้วรัน `node scripts/check-bundle.mjs` (อ่านอย่างเดียว ตรวจว่าสกิล เอเจนต์ และ workflow สอดคล้องกัน, description ไม่เกิน 500 ตัวอักษร, ไม่มี token หรือพาธเครื่อง)
+- เพิ่มหรือเปลี่ยนสกิลของเอเจนต์: แก้ `agents/agents.json`, ใส่โฟลเดอร์สกิลใน `skills/`, เพิ่มแถวใน `skills/skills.json` แล้วรัน `node scripts/check-bundle.mjs` (ตรวจว่าสกิล เอเจนต์ และ workflow สอดคล้องกัน, description ไม่เกิน 500 ตัวอักษร, ไม่มี token หรือพาธเครื่อง, ชื่อเอเจนต์ในกฎไม่ตกค้างชื่อเก่า และรันชุดทดสอบของ `check-plan`)
+- ตรวจแผนก่อนส่งต่อ/โพสต์ Jira: `node tba/scripts/check-plan.mjs .tba/cases/<KEY>` (sequence diagram, mermaid, API blueprint, tag subtask) ตารางกฎ ↔ ตัวตรวจอยู่ใน `tba/OPENBOT-ADAPTATION.md` หัวข้อ "Rules and what enforces them" ไอเดียมาจาก pstack-correct: กฎที่มีแค่ข้อความ agent ข้ามได้ กฎที่มีตัวตรวจต้องผ่าน
 ## ติดตั้ง
 
 1. เชื่อม **Atlassian (Jira)** ใน OpenBot ด้วยบัญชีของตัวเอง
@@ -70,7 +71,8 @@ agents/agents.json        สเปกเอเจนต์ 5 ตัว
 workflows/*.json          สเปก workflow 3 ตัว
 skills/*/SKILL.md         สกิล 5 ตัว (caveman, debug-mantra, tba-brainstorming, ponytail, scrutinize)
 skills/skills.json        ที่มาและ license ของแต่ละสกิล
-scripts/check-bundle.mjs  ตรวจความสอดคล้องของชุดแพ็ก (อ่านอย่างเดียว)
+scripts/check-bundle.mjs  ตรวจความสอดคล้องของชุดแพ็ก
+tba/scripts/check-plan.mjs  ตรวจ plan/blueprint/sequence (+ tba/scripts/test/)
 tba/                      สคริปต์ Node, กฎ, prompt และคำสั่งอ้างอิงจาก plugin เดิม
 ```
 
