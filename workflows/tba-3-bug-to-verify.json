@@ -5,7 +5,7 @@
     { "ref": "t", "kind": "trigger", "fields": { "trigger": "manual" } },
     {
       "ref": "debug", "kind": "agent", "from": "t", "agentKey": "bugsjaeger",
-      "fields": { "task": "Debug the bug in the input (a Jira key, an error log or a failing test, plus the repo if given). Follow your role prompt, the debug-mantra skill and OPENBOT-ADAPTATION.md: recite the mantra, reproduce, find the fail path, falsify, keep the ledger. Write the diagnosis .tba/cases/<KEY>/debug.md. Remove every temporary probe. Do not design or write the fix, do not commit or push, do not write to Jira. End your answer with a handoff block for TBA PlanMan that stands alone, and state clearly SOLUTION READY (reliable repro, one surviving hypothesis, consistent ledger) or NEEDS INPUT with what is missing." }
+      "fields": { "task": "Debug the bug in the input (a Jira key, an error log or a failing test, plus the repo if given). Follow your role prompt, the tba-debug skill and OPENBOT-ADAPTATION.md: recite the mantra, reproduce, find the fail path, falsify, keep the ledger. Write the diagnosis .tba/cases/<KEY>/debug.md. Remove every temporary probe. Do not design or write the fix, do not commit or push, do not write to Jira. End your answer with a handoff block for TBA PlanMan that stands alone, and state clearly SOLUTION READY (reliable repro, one surviving hypothesis, consistent ledger) or NEEDS INPUT with what is missing." }
     },
     {
       "ref": "ready", "kind": "condition", "from": "debug",

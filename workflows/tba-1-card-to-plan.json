@@ -67,7 +67,7 @@
       "from": "route",
       "agentKey": "bugsjaeger",
       "fields": {
-        "task": "Debug the bug card in TaskScout's handoff. Follow your role prompt, the debug-mantra skill and OPENBOT-ADAPTATION.md: recite the mantra, reproduce, find the fail path, falsify, keep the ledger. Write the diagnosis .tba/cases/<KEY>/debug.md. Remove every temporary probe. Do not design or write the fix, do not commit or push, do not write to Jira. End your answer with a handoff block for TBA PlanMan that stands alone, and state clearly SOLUTION READY (reliable repro, one surviving hypothesis, consistent ledger) or NEEDS INPUT with what is missing."
+        "task": "Debug the bug card in TaskScout's handoff. Follow your role prompt, the tba-debug skill and OPENBOT-ADAPTATION.md: recite the mantra, reproduce, find the fail path, falsify, keep the ledger. Write the diagnosis .tba/cases/<KEY>/debug.md. Remove every temporary probe. Do not design or write the fix, do not commit or push, do not write to Jira. End your answer with a handoff block for TBA PlanMan that stands alone, and state clearly SOLUTION READY (reliable repro, one surviving hypothesis, consistent ledger) or NEEDS INPUT with what is missing."
       },
       "branch": "yes"
     },

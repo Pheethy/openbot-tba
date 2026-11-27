@@ -11,15 +11,6 @@
       "licenseStatus": "verified"
     },
     {
-      "name": "debug-mantra",
-      "path": "skills/debug-mantra",
-      "purpose": "Four-step debugging discipline (reproduce, fail path, falsify, ledger). Backbone of TBA BugsJaeger.",
-      "source": "https://github.com/thananon/9arm-skills, skills/engineering/debug-mantra/SKILL.md (identical copy, upstream commit d714cb84f35e, compared 2026-11-24). Author: Arm Patinyasakdikul",
-      "license": "NONE in the upstream repository (no LICENSE file, no license field; checked 2026-11-24). All rights reserved by default: do not redistribute publicly without the author's permission",
-      "testedRevision": 1,
-      "licenseStatus": "no-license"
-    },
-    {
       "name": "tba-brainstorming",
       "path": "skills/tba-brainstorming",
       "purpose": "Design conversation for TBA PlanMan: read the card and repo first, fill a 5-area coverage ledger, ask only what the code cannot answer, offer approaches, write plan.md.",
@@ -38,13 +29,22 @@
       "licenseStatus": "self-declared"
     },
     {
-      "name": "scrutinize",
-      "path": "skills/scrutinize",
-      "purpose": "Outsider code and plan review for TBQA. Secrets are never quoted and the user decides what to fix (see OPENBOT-ADAPTATION.md).",
-      "source": "https://github.com/thananon/9arm-skills, skills/engineering/scrutinize/SKILL.md (identical except one word removed from the description to fit 500 characters; upstream commit 1b222f2284ee, compared 2026-11-24). Author: Arm Patinyasakdikul",
-      "license": "NONE in the upstream repository (no LICENSE file, no license field; checked 2026-11-24). All rights reserved by default: do not redistribute publicly without the author's permission",
+      "name": "tba-debug",
+      "path": "skills/tba-debug",
+      "purpose": "Root-cause diagnosis for TBA BugsJaeger: runnable repro, fail path from real state, ranked hypotheses with disproofs, ledger, root cause. Writes debug.md, never the fix.",
+      "source": "original text written for this bundle; ideas from the pstack principles fix-root-causes and prove-it-works (https://github.com/cursor/plugins, pstack, commit 792440e8a560a4a3f63748cdee70491ecd412982)",
+      "license": "Original to this bundle. The pstack ideas are MIT, Copyright (c) 2026 Lauren Tan (text in skills/tba-debug/references/pstack-LICENSE.txt)",
       "testedRevision": 1,
-      "licenseStatus": "no-license"
+      "licenseStatus": "verified"
+    },
+    {
+      "name": "tba-review",
+      "path": "skills/tba-review",
+      "purpose": "Outsider review for TBQA: intent, trace the real path, prove claims by running, report with severity and evidence. Secrets are never quoted and the user decides what to fix.",
+      "source": "original text written for this bundle; ideas from the pstack principles prove-it-works and blast-radius (https://github.com/cursor/plugins, pstack, commit 792440e8a560a4a3f63748cdee70491ecd412982)",
+      "license": "Original to this bundle. The pstack ideas are MIT, Copyright (c) 2026 Lauren Tan (text in skills/tba-review/references/pstack-LICENSE.txt)",
+      "testedRevision": 1,
+      "licenseStatus": "verified"
     }
   ]
 }

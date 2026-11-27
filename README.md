@@ -8,14 +8,14 @@
 |---|---|
 | **เอเจนต์ 5 ตัว** | `TBA TaskScout` (รับการ์ดจาก Jira แล้วแยกประเภท: Bug → BugsJaeger, Feature → PlanMan), `TBA PlanMan` (ออกแบบ + API blueprint + sequence diagram), `TBA Flusher` (เขียนโค้ด + unit test), `TBA BugsJaeger` (debug หา root cause แล้วส่งให้ PlanMan ออกแบบวิธีแก้), `TBQA` (ตรวจ + e2e) |
 | **Workflow 3 ตัว** | `TBA 1` card → (Bug: debug → fix | Feature: design → subtasks), `TBA 2` subtask → implement → audit → ship, `TBA 3` bug → debug → design fix → approve → fix → verify (BugsJaeger → PlanMan → คุณอนุมัติ → Flusher → TBQA) |
-| **สกิล** | `caveman` ให้ทุกตัวพูดสั้นตรงประเด็น (ภาษาไทย ศัพท์เทคนิคอังกฤษ), `debug-mantra` วินัย debug 4 ข้อให้ BugsJaeger, `scrutinize` รีวิวโค้ดมุมคนนอกให้ TBQA (ห้ามเผย secret, ถามคุณก่อนแก้), `ponytail` โหมดเขียนโค้ดเปลี่ยนน้อยที่สุดที่แก้ครบให้ Flusher, `tba-brainstorming` วิธีคุยออกแบบให้ PlanMan (ดัดแปลงจาก [obra/superpowers](https://github.com/obra/superpowers) MIT) |
+| **สกิล** | `caveman` ให้ทุกตัวพูดสั้นตรงประเด็น (ภาษาไทย ศัพท์เทคนิคอังกฤษ), `tba-debug` วินัย debug 4 ข้อให้ BugsJaeger, `tba-review` รีวิวโค้ดมุมคนนอกให้ TBQA (ห้ามเผย secret, ถามคุณก่อนแก้), `ponytail` โหมดเขียนโค้ดเปลี่ยนน้อยที่สุดที่แก้ครบให้ Flusher, `tba-brainstorming` วิธีคุยออกแบบให้ PlanMan (ดัดแปลงจาก [obra/superpowers](https://github.com/obra/superpowers) MIT) |
 | **กฎทีม** | `tba/OPENBOT-ADAPTATION.md` (ใช้ Atlassian MCP แทน token, convention ของทีม, จุดขออนุมัติ) |
 
 ## เอเจนต์ × สกิล
 
 เอเจนต์แต่ละตัว **ต้องมี** สกิลตามตารางนี้ (แหล่งความจริงคือฟิลด์ `skills` ใน `agents/agents.json`) ตอนติดตั้ง เอเจนต์จะติดตั้งให้ครบแล้วตรวจกลับว่าไม่ขาดไม่เกิน
 
-| เอเจนต์ | บทบาท | `caveman` | `tba-brainstorming` | `ponytail` | `debug-mantra` | `scrutinize` |
+| เอเจนต์ | บทบาท | `caveman` | `tba-brainstorming` | `ponytail` | `tba-debug` | `tba-review` |
 |---|---|---|---|---|---|---|
 | `TBA TaskScout` | รับการ์ด แยก Bug / Feature | ✓ | — | — | — | — |
 | `TBA PlanMan` | ออกแบบ / ออกแบบวิธีแก้ | ✓ | ✓ | — | — | — |
@@ -27,7 +27,7 @@
   - `caveman`: **Apache-2.0** (Julius Brussee) แนบ LICENSE และ NOTICE ไว้ใน `skills/caveman/references/` ชื่อ "Caveman" เป็นเครื่องหมายการค้าของผู้เขียน repo นี้ไม่ได้เกี่ยวข้องหรือได้รับการรับรองจากเขา
   - `tba-brainstorming`: ดัดแปลงจาก obra/superpowers **MIT** (Jesse Vincent) แนบ license ไว้
   - `ponytail`: ระบุ MIT ในไฟล์เอง ไม่มีชื่อผู้เขียน (ตรวจที่มาไม่ได้)
-  - `debug-mantra`, `scrutinize`: คัดลอกจาก [thananon/9arm-skills](https://github.com/thananon/9arm-skills) ซึ่ง **ไม่มี license** ผู้เขียนสงวนสิทธิ์ตามค่าเริ่มต้น **ห้ามเผยแพร่ใน repo สาธารณะโดยไม่ได้รับอนุญาต**
+  - `tba-debug`, `tba-review`: เขียนใหม่เองสำหรับชุดนี้ (แทน debug-mantra / scrutinize เดิมที่ไม่มี license) ยืมแนวคิดจาก pstack ที่เป็น **MIT** แนบ license ไว้ใน `references/`
 - ก่อนเปิด repo เป็น Public รัน `node scripts/check-bundle.mjs --public` สคริปต์จะล้มถ้ายังมีสกิลที่ไม่มี license
 - เพิ่มหรือเปลี่ยนสกิลของเอเจนต์: แก้ `agents/agents.json`, ใส่โฟลเดอร์สกิลใน `skills/`, เพิ่มแถวใน `skills/skills.json` แล้วรัน `node scripts/check-bundle.mjs` (ตรวจว่าสกิล เอเจนต์ และ workflow สอดคล้องกัน, description ไม่เกิน 500 ตัวอักษร, ไม่มี token หรือพาธเครื่อง, ชื่อเอเจนต์ในกฎไม่ตกค้างชื่อเก่า และรันชุดทดสอบของ `check-plan`)
 - ตรวจแผนก่อนส่งต่อ/โพสต์ Jira: `node tba/scripts/check-plan.mjs .tba/cases/<KEY>` (sequence diagram, mermaid, API blueprint, tag subtask) ตารางกฎ ↔ ตัวตรวจอยู่ใน `tba/OPENBOT-ADAPTATION.md` หัวข้อ "Rules and what enforces them" ไอเดียมาจาก pstack-correct: กฎที่มีแค่ข้อความ agent ข้ามได้ กฎที่มีตัวตรวจต้องผ่าน
@@ -69,7 +69,7 @@
 SETUP.md                  คำสั่งให้เอเจนต์ติดตั้ง
 agents/agents.json        สเปกเอเจนต์ 5 ตัว
 workflows/*.json          สเปก workflow 3 ตัว
-skills/*/SKILL.md         สกิล 5 ตัว (caveman, debug-mantra, tba-brainstorming, ponytail, scrutinize)
+skills/*/SKILL.md         สกิล 5 ตัว (caveman, tba-debug, tba-brainstorming, ponytail, tba-review)
 skills/skills.json        ที่มาและ license ของแต่ละสกิล
 scripts/check-bundle.mjs  ตรวจความสอดคล้องของชุดแพ็ก
 tba/scripts/check-plan.mjs  ตรวจ plan/blueprint/sequence (+ tba/scripts/test/)

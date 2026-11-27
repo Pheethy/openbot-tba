@@ -130,7 +130,7 @@ These override the older templates in `reference\`. The old `jira.mjs` bugs (`_m
 - Diff the blueprint against the implementation (endpoint, method, status code, response fields) and flag anything extra or missing.
 - Before generating or running e2e, report a preflight checklist: `@playwright/test` in `package.json`; Playwright MCP available; `e2e/playwright/.auth/admin.json` and the personas the specs need; web (`E2E_BASE_URL` or `:3000`) and API reachable; new backend endpoint not yet deployed means the API must run locally from that branch (needs `.env`). Say plainly what blocks a real run. Unknown selectors get `TODO(selector)`.
 - Persona convention: `personas.ts` plus roles in `admin.json`. Warn if the web `jest.config.ts` does not exclude `/e2e/`.
-- **Code review: the `scrutinize` skill.** TBQA reviews the diff and the plan with it (intent, trace the real path, verify, report with severity, rationale and evidence). It adds to the tests and checks above; it does not replace them.
+- **Code review: the `tba-review` skill.** TBQA reviews the diff and the plan with it (intent, trace the real path, verify, report with severity, rationale and evidence). It adds to the tests and checks above; it does not replace them.
   - The intent comes from the approved plan, blueprint, `fix-plan.md` or `debug.md`. The "simpler alternative" pass is a **note**, not a blocker: an approved plan is not reopened unless the review shows it is wrong or harmful. The user decides.
   - TBQA states BLOCKED only for failing tests, regressions, a secret leak, or a finding that proves the change does not do what it claims. Every other finding is listed for the user.
 - **Secrets must never leak through a review.** This overrides "Evidence" and "cite the code" of the skill:
@@ -151,7 +151,7 @@ After reading the card, TaskScout decides what kind of work it is and hands it o
 
 | Issue type | Goes to |
 |---|---|
-| `Bug` (the bug type names are `BUG_ISSUE_TYPES` in `TEAM-PROFILE.md`; in the original team it is `Bug`) | **TBA BugsJaeger** first (debug-mantra), then the Debug flow below |
+| `Bug` (the bug type names are `BUG_ISSUE_TYPES` in `TEAM-PROFILE.md`; in the original team it is `Bug`) | **TBA BugsJaeger** first (tba-debug), then the Debug flow below |
 | `Story`, `Change Requirement`, any other feature work | **TBA PlanMan** (design) |
 | `Sub-task` | not an intake: it is built with the subtask flow (`TBA 2`) |
 | `Epic`, `Meeting` | not buildable work: tell the user, hand nothing over |
@@ -162,7 +162,7 @@ After reading the card, TaskScout decides what kind of work it is and hands it o
 - In a direct chat, TaskScout sends the handoff itself with `openbot.send_message` to the target agent (`expectsReply` true, one message that stands alone: goal, card key and link, what was read, what is approved and what is not: no code, no commit, no push, no Jira write). In `TBA 1` a condition node does the routing.
 ## Debug flow (TBA BugsJaeger → TBA PlanMan → TBA Flusher → TBQA)
 
-- A bug (Jira bug card, error log, failing test) goes to **TBA BugsJaeger** first. It follows the `debug-mantra` skill and writes the diagnosis `.tba/cases/<KEY>/debug.md`: repro, fail path, ranked hypotheses, ledger, root cause, what a fix must satisfy, regression test idea. It does not design or write the fix.
+- A bug (Jira bug card, error log, failing test) goes to **TBA BugsJaeger** first. It follows the `tba-debug` skill and writes the diagnosis `.tba/cases/<KEY>/debug.md`: repro, fail path, ranked hypotheses, ledger, root cause, what a fix must satisfy, regression test idea. It does not design or write the fix.
 - No reliable repro, or no surviving hypothesis: BugsJaeger stops and asks the user. It does not hand off.
 - Then **TBA PlanMan** designs the fix, with the `tba-brainstorming` skill:
   - Run the repro once to confirm it still fails as `debug.md` says. Do not re-investigate the root cause. If the evidence does not hold, send it back to BugsJaeger with what you saw.
